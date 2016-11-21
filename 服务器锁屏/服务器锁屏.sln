@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallListUpdateTool", "CallListUpdateTool\CallListUpdateTool.csproj", "{290BF179-7705-453B-B8B1-EBAB4BBC0304}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "服务器锁屏", "服务器锁屏\服务器锁屏.csproj", "{39837AFC-695B-4522-BBDA-6411F709EDE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{290BF179-7705-453B-B8B1-EBAB4BBC0304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{290BF179-7705-453B-B8B1-EBAB4BBC0304}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{290BF179-7705-453B-B8B1-EBAB4BBC0304}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{290BF179-7705-453B-B8B1-EBAB4BBC0304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39837AFC-695B-4522-BBDA-6411F709EDE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39837AFC-695B-4522-BBDA-6411F709EDE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39837AFC-695B-4522-BBDA-6411F709EDE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39837AFC-695B-4522-BBDA-6411F709EDE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

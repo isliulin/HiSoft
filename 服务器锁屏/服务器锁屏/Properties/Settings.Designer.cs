@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CallListUpdateTool.Properties
+namespace 服务器锁屏.Properties
 {
 
 

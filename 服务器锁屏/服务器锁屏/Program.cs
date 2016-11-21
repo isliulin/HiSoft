@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace 增宇监控程序功能验证
+namespace 服务器锁屏
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace 增宇监控程序功能验证
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new LockScreen());
         }
     }
 }
