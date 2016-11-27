@@ -38,6 +38,8 @@
             this.BTNUpload = new System.Windows.Forms.Button();
             this.LRumMessage = new System.Windows.Forms.Label();
             this.PBUpdateList = new System.Windows.Forms.ProgressBar();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.SGVListShow)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,9 +60,9 @@
             this.LabelFilePath.Font = new System.Drawing.Font("宋体", 12F);
             this.LabelFilePath.Location = new System.Drawing.Point(23, 73);
             this.LabelFilePath.Name = "LabelFilePath";
-            this.LabelFilePath.Size = new System.Drawing.Size(320, 16);
+            this.LabelFilePath.Size = new System.Drawing.Size(264, 16);
             this.LabelFilePath.TabIndex = 1;
-            this.LabelFilePath.Text = "当前版本仅支持 MS Office 97-03  xls格式";
+            this.LabelFilePath.Text = "请安装MS Office 2007以上版本软件";
             // 
             // SGVListShow
             // 
@@ -75,7 +77,7 @@
             // 
             this.LLTMPDownload.AutoSize = true;
             this.LLTMPDownload.Font = new System.Drawing.Font("宋体", 15F);
-            this.LLTMPDownload.Location = new System.Drawing.Point(1168, 18);
+            this.LLTMPDownload.Location = new System.Drawing.Point(1009, 5);
             this.LLTMPDownload.Name = "LLTMPDownload";
             this.LLTMPDownload.Size = new System.Drawing.Size(89, 20);
             this.LLTMPDownload.TabIndex = 4;
@@ -136,16 +138,41 @@
             // 
             // PBUpdateList
             // 
-            this.PBUpdateList.Location = new System.Drawing.Point(710, 28);
+            this.PBUpdateList.Location = new System.Drawing.Point(700, 28);
             this.PBUpdateList.Name = "PBUpdateList";
-            this.PBUpdateList.Size = new System.Drawing.Size(433, 23);
+            this.PBUpdateList.Size = new System.Drawing.Size(466, 23);
             this.PBUpdateList.TabIndex = 11;
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Font = new System.Drawing.Font("宋体", 12F);
+            this.linkLabel1.Location = new System.Drawing.Point(1104, 8);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(72, 16);
+            this.linkLabel1.TabIndex = 12;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "上传统计";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
+            // linkLabel3
+            // 
+            this.linkLabel3.AutoSize = true;
+            this.linkLabel3.Location = new System.Drawing.Point(874, 8);
+            this.linkLabel3.Name = "linkLabel3";
+            this.linkLabel3.Size = new System.Drawing.Size(119, 12);
+            this.linkLabel3.TabIndex = 14;
+            this.linkLabel3.TabStop = true;
+            this.linkLabel3.Text = "MS ACE 12.0插件下载";
+            this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
             // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1272, 636);
+            this.ClientSize = new System.Drawing.Size(1178, 636);
+            this.Controls.Add(this.linkLabel3);
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.SGVListShow);
             this.Controls.Add(this.PBUpdateList);
             this.Controls.Add(this.LRumMessage);
@@ -157,7 +184,7 @@
             this.Controls.Add(this.LabelFilePath);
             this.Controls.Add(this.BTNSelectFile);
             this.Name = "Login";
-            this.Text = "Form1";
+            this.Text = "海汇软件通话记录上传工具";
             ((System.ComponentModel.ISupportInitialize)(this.SGVListShow)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -176,6 +203,8 @@
         private System.Windows.Forms.Button BTNUpload;
         private System.Windows.Forms.Label LRumMessage;
         private System.Windows.Forms.ProgressBar PBUpdateList;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel linkLabel3;
     }
 }
 

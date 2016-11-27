@@ -8,8 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using DESLite;
-using ReadXLS;
+using ReadDate;
 using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Threading;
@@ -60,15 +59,15 @@ namespace CallListUpdateTool
                 {
                     this.LabelFilePath.Text = GetXlsPath.FileName;
 
-                    ReadXLS.ExcelReader k = new ReadXLS.ExcelReader();
+                    ReadDate.ExcelHelper k = new ReadDate.ExcelHelper();
                     //模板标题定义
                     string DataColName = "'" + UID + "' as 手机号,序号,year(通话起始时间) as 年,month(通话起始时间) as 月,  业务类型,	通话起始时间,	通话时长,	呼叫类型,	对方号码,	本机通话地,对方归属地,	通话类型,	通话费,	其他费,	小计";
 
                     //DataSet DSCalList = k.ExcelToDS(this.LabelFilePath.Text);
                     try
                     {
-                        DataSet DSCalList = k.ExcelXLSXToDT(this.LabelFilePath.Text, DataColName);
-                        SGVListShow.DataSource = DSCalList.Tables[0];
+                        DataTable DSCalList = k.ReadExcelToDT(this.LabelFilePath.Text, DataColName);
+                        SGVListShow.DataSource = DSCalList;
                         SGVListShow.AllowUserToAddRows = false;
 
                         this.UserPhoneNumber.Enabled = false;
@@ -274,6 +273,18 @@ namespace CallListUpdateTool
             {
                 MessageBox.Show("服务器连接失败，请检查网络设置 \n" + ex.Message, "服务器链接失败", MessageBoxButtons.OK);
             }
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form Counter = new UpdateCheck();
+            Counter.Show();
+        }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            
+            System.Diagnostics.Process.Start("iexplore.exe", "http://www.microsoft.com/zh-CN/download/details.aspx?id=13255");
         }
     }
 }
