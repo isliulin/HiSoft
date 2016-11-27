@@ -30,6 +30,7 @@
         {
             this.DGVCounterShow = new System.Windows.Forms.DataGridView();
             this.BTNLoading = new System.Windows.Forms.Button();
+            this.LTitleNote = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DGVCounterShow)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,23 +47,34 @@
             // 
             this.BTNLoading.Location = new System.Drawing.Point(11, 7);
             this.BTNLoading.Name = "BTNLoading";
-            this.BTNLoading.Size = new System.Drawing.Size(75, 23);
+            this.BTNLoading.Size = new System.Drawing.Size(88, 23);
             this.BTNLoading.TabIndex = 1;
-            this.BTNLoading.Text = "加载";
+            this.BTNLoading.Text = "通话次数统计";
             this.BTNLoading.UseVisualStyleBackColor = true;
             this.BTNLoading.Click += new System.EventHandler(this.BTNLoading_Click);
+            // 
+            // LTitleNote
+            // 
+            this.LTitleNote.AutoSize = true;
+            this.LTitleNote.Location = new System.Drawing.Point(118, 13);
+            this.LTitleNote.Name = "LTitleNote";
+            this.LTitleNote.Size = new System.Drawing.Size(185, 12);
+            this.LTitleNote.TabIndex = 2;
+            this.LTitleNote.Text = "最新年度通话次数统计，单位：次";
             // 
             // UpdateCheck
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(745, 440);
+            this.Controls.Add(this.LTitleNote);
             this.Controls.Add(this.BTNLoading);
             this.Controls.Add(this.DGVCounterShow);
             this.Name = "UpdateCheck";
             this.Text = "UpdateCheck";
             ((System.ComponentModel.ISupportInitialize)(this.DGVCounterShow)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -70,5 +82,6 @@
 
         private System.Windows.Forms.DataGridView DGVCounterShow;
         private System.Windows.Forms.Button BTNLoading;
+        private System.Windows.Forms.Label LTitleNote;
     }
 }
