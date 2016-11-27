@@ -52,7 +52,7 @@ namespace CallListUpdateTool
 
                 OpenFileDialog GetXlsPath = new OpenFileDialog();
                 GetXlsPath.Multiselect = false;
-                GetXlsPath.Filter = "Excel 97|*.xls";
+                //GetXlsPath.Filter = "Excel 97|*.xls";
                 GetXlsPath.Title = "通话详单选择";
 
                 if (GetXlsPath.ShowDialog() == DialogResult.OK)
