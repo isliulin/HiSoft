@@ -60,6 +60,9 @@ namespace CallListUpdateTool
                     this.LabelFilePath.Text = GetXlsPath.FileName;
 
                     ReadDate.ExcelHelper k = new ReadDate.ExcelHelper();
+                    k.Path = this.LabelFilePath.Text;
+                    k.InitialExcelHelper();
+                    
                     //模板标题定义
                     //序号	业务类型	通话起始时间	通话时长	呼叫类型	对方号码	本机通话地	对方归属地	通话类型	通话费	其他费	小计
 
@@ -68,7 +71,7 @@ namespace CallListUpdateTool
                     //DataSet DSCalList = k.ExcelToDS(this.LabelFilePath.Text);
                     try
                     {
-                        DataTable DSCalList = k.ReadExcelToDT(this.LabelFilePath.Text, DataColName);
+                        DataTable DSCalList = k.ReadExcelToDT(DataColName,"");
                         SGVListShow.DataSource = DSCalList;
                         SGVListShow.AllowUserToAddRows = false;
 
