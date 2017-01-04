@@ -70,10 +70,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SGVListShow.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.SGVListShow.Location = new System.Drawing.Point(3, 100);
+            this.SGVListShow.Location = new System.Drawing.Point(3, 105);
             this.SGVListShow.Name = "SGVListShow";
             this.SGVListShow.RowTemplate.Height = 23;
-            this.SGVListShow.Size = new System.Drawing.Size(1257, 511);
+            this.SGVListShow.Size = new System.Drawing.Size(1173, 528);
             this.SGVListShow.TabIndex = 3;
             // 
             // LLTMPDownload
@@ -134,7 +134,7 @@
             // 
             this.LRumMessage.AutoSize = true;
             this.LRumMessage.Font = new System.Drawing.Font("宋体", 12F);
-            this.LRumMessage.Location = new System.Drawing.Point(707, 73);
+            this.LRumMessage.Location = new System.Drawing.Point(706, 73);
             this.LRumMessage.Name = "LRumMessage";
             this.LRumMessage.Size = new System.Drawing.Size(120, 16);
             this.LRumMessage.TabIndex = 10;
