@@ -31,6 +31,7 @@
             this.DGVCounterShow = new System.Windows.Forms.DataGridView();
             this.BTNLoading = new System.Windows.Forms.Button();
             this.LTitleNote = new System.Windows.Forms.Label();
+            this.CBYear = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.DGVCounterShow)).BeginInit();
             this.SuspendLayout();
             // 
@@ -48,7 +49,7 @@
             // 
             // BTNLoading
             // 
-            this.BTNLoading.Location = new System.Drawing.Point(11, 7);
+            this.BTNLoading.Location = new System.Drawing.Point(115, 7);
             this.BTNLoading.Name = "BTNLoading";
             this.BTNLoading.Size = new System.Drawing.Size(88, 23);
             this.BTNLoading.TabIndex = 1;
@@ -59,17 +60,26 @@
             // LTitleNote
             // 
             this.LTitleNote.AutoSize = true;
-            this.LTitleNote.Location = new System.Drawing.Point(118, 13);
+            this.LTitleNote.Location = new System.Drawing.Point(214, 12);
             this.LTitleNote.Name = "LTitleNote";
             this.LTitleNote.Size = new System.Drawing.Size(185, 12);
             this.LTitleNote.TabIndex = 2;
             this.LTitleNote.Text = "最新年度通话次数统计，单位：次";
+            // 
+            // CBYear
+            // 
+            this.CBYear.FormattingEnabled = true;
+            this.CBYear.Location = new System.Drawing.Point(12, 9);
+            this.CBYear.Name = "CBYear";
+            this.CBYear.Size = new System.Drawing.Size(90, 20);
+            this.CBYear.TabIndex = 3;
             // 
             // UpdateCheck
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(745, 440);
+            this.Controls.Add(this.CBYear);
             this.Controls.Add(this.LTitleNote);
             this.Controls.Add(this.BTNLoading);
             this.Controls.Add(this.DGVCounterShow);
@@ -86,5 +96,6 @@
         private System.Windows.Forms.DataGridView DGVCounterShow;
         private System.Windows.Forms.Button BTNLoading;
         private System.Windows.Forms.Label LTitleNote;
+        private System.Windows.Forms.ComboBox CBYear;
     }
 }
