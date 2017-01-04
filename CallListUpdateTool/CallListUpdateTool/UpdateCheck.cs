@@ -5,7 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using ReadDate;
+using ReadData;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,7 +20,7 @@ namespace CallListUpdateTool
 
         private void loadListCounter()
         {
-            ReadDate.MSSQLHelper k = new ReadDate.MSSQLHelper();
+            ReadData.MSSQLHelper k = new ReadData.MSSQLHelper();
             k.MSSQLConnSTR = "server=192.168.100.254;user=sa;pwd=Fjkdashg@3344";
             k.InitialMSSQLDB();
 

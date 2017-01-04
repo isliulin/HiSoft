@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using ReadDate;
+using ReadData;
 using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Threading;
@@ -59,18 +59,20 @@ namespace CallListUpdateTool
                 {
                     this.LabelFilePath.Text = GetXlsPath.FileName;
 
-                    ReadDate.ExcelHelper k = new ReadDate.ExcelHelper();
-                    k.Path = this.LabelFilePath.Text;
+                    ReadData.ExcelHelper k = new ReadData.ExcelHelper();
+                    k.Path = GetXlsPath.FileName;
                     k.InitialExcelHelper();
-                    
+
                     //模板标题定义
                     //序号	业务类型	通话起始时间	通话时长	呼叫类型	对方号码	本机通话地	对方归属地	通话类型	通话费	其他费	小计
+                    //序号	业务类型	通话起始时间	通话时长	呼叫类型	对方号码	本机通话地	对方归属地	通话类型	通话费	其他费	小计
+
 
                     string DataColName = "'" + UID + "' as 手机号,序号,year(通话起始时间) as 年,month(通话起始时间) as 月,  业务类型,	通话起始时间,	通话时长,	呼叫类型,	对方号码,	本机通话地,对方归属地,	通话类型,	通话费,	其他费,	小计";
 
                     //DataSet DSCalList = k.ExcelToDS(this.LabelFilePath.Text);
                     try
-                    {
+                    {                    
                         DataTable DSCalList = k.ReadExcelToDT(DataColName,"");
                         SGVListShow.DataSource = DSCalList;
                         SGVListShow.AllowUserToAddRows = false;
@@ -80,7 +82,7 @@ namespace CallListUpdateTool
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Excel文件读取错误，请确认模板完整性！！\n\n *************************** \n\n *请将Excel文件打开并另存为新文件，通过新文件导入。 \n\n *************************** \n\n 详细错误信息:\n" + ex.Message + "\n" + DataColName, "文件读取失败", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Excel文件读取错误，请确认模板完整性！！\n\n *************************** \n\n *请将Excel文件打开并另存为xlsx格式，通过新文件导入。 \n\n *************************** \n\n 详细错误信息:\n" + ex.Message + "\n" + DataColName, "文件读取失败", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }
