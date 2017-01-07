@@ -95,7 +95,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>7z a  ..\%25TargetDir%25\CallListUpdateTool.7z  %25TargetDir%25</PostBuildEvent>
+    <PostBuildEvent>7z a -tzip  ..\%25TargetDir%25\CallListUpdateTool.zip  %25TargetDir%25</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
