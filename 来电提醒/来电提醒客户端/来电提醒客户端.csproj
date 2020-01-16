@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x86</Platforms>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>XYZoneYang.pfx</AssemblyOriginatorKeyFile>
+    <ApplicationIcon>Apps_file.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>E:\VisualStudio\ProjectOut\CRMPhone\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <OutputPath>E:\VisualStudio\ProjectOut\CRMPhone\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="AD130Device.dll" />
+    <None Remove="FileIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="AD130Device.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fleck" Version="1.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="FileIcon.png" />
+  </ItemGroup>
+
+</Project>

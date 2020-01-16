@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "来电提醒服务", "来电提醒\来电提醒服务.csproj", "{90498157-DCF5-4299-86C9-5952FA1BD14A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "来电提醒客户端", "来电提醒客户端\来电提醒客户端.csproj", "{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneRecorderAD130", "..\..\..\..\Temp\ad130\AD130 Demo Source Code\C#\Project1\Project1\PhoneRecorderAD130.csproj", "{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90498157-DCF5-4299-86C9-5952FA1BD14A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90498157-DCF5-4299-86C9-5952FA1BD14A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90498157-DCF5-4299-86C9-5952FA1BD14A}.Debug|x86.ActiveCfg = Debug|x86
+		{90498157-DCF5-4299-86C9-5952FA1BD14A}.Debug|x86.Build.0 = Debug|x86
+		{90498157-DCF5-4299-86C9-5952FA1BD14A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90498157-DCF5-4299-86C9-5952FA1BD14A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90498157-DCF5-4299-86C9-5952FA1BD14A}.Release|x86.ActiveCfg = Release|Any CPU
+		{90498157-DCF5-4299-86C9-5952FA1BD14A}.Release|x86.Build.0 = Release|Any CPU
+		{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}.Debug|x86.ActiveCfg = Debug|x86
+		{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}.Debug|x86.Build.0 = Debug|x86
+		{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}.Release|x86.ActiveCfg = Release|x86
+		{83E7B816-D0B9-4FF4-BF7A-CA5EF2C98A7B}.Release|x86.Build.0 = Release|x86
+		{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}.Debug|x86.Build.0 = Debug|Any CPU
+		{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}.Release|x86.ActiveCfg = Release|Any CPU
+		{FA845AAF-FE73-4DFF-BD91-7428C7B5F459}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {481FAEF5-5A5C-4AC8-A266-FAD612540C06}
+	EndGlobalSection
+EndGlobal
