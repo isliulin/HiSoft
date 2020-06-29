@@ -48,23 +48,17 @@ public struct TAGSTATE
 };
 
 
-namespace 来电提醒客户端
+namespace 来电提醒服务端
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ServerWindow : Window
     {
 
         public static List<Phone> PhoneStateList = new List<Phone>();
 
-        IDictionary<string, IWebSocketConnection> Socket_Clients = new Dictionary<string, IWebSocketConnection>();
-        private ClientWebSocket Socket_Client = new ClientWebSocket();
-        private System.Threading.CancellationToken ClientCT = new System.Threading.CancellationToken();
-
-        private BackgroundWorker ListeningMsg = new BackgroundWorker();
-
-        public MainWindow()
+        public ServerWindow()
         {
             InitializeComponent();
             this.PhoneStateListView.DataContext = PhoneStateList;
@@ -75,88 +69,32 @@ namespace 来电提醒客户端
         }
         private void MainWindowLoaded(object sender, RoutedEventArgs e)
         {
-            ListeningMsg.WorkerReportsProgress = true;
-            ListeningMsg.WorkerSupportsCancellation = true;
-            ListeningMsg.ProgressChanged += SyncStatsChange_ReportProgress;
-            ListeningMsg.DoWork += GetServiceMsg;
-
-            Boolean sb = bool.Parse(SetConfig.GetConfig(ShowMoreInfo.Name));
-            ShowMoreInfo.IsChecked = sb;
-            Boolean cb = bool.Parse(SetConfig.GetConfig(isClient.Name));
-            isClient.IsChecked = cb;
-            ShowMoreInfo.Checked += ShowMoreChange;
-            ShowMoreInfo.Unchecked += ShowMoreChange;
-            isClient.Checked += isClientChange;
-            isClient.Unchecked += isClientChange;
-
-            if (!(bool)isClient.IsChecked)
+            //基础参数
             {
-                try
+                if (string.IsNullOrWhiteSpace(SetConfig.GetConfig(ShowMoreInfo.Name)))
                 {
-                    SIPG.Visibility = Visibility.Collapsed;
-                    LinkState.Visibility = Visibility.Hidden;
+                    ShowMoreInfo.IsChecked = false;
                 }
-                catch
-                { }
-                
-                try
+                else
                 {
-                    WebSocketServer Socket_Server = new WebSocketServer("ws://0.0.0.0:9632");
-
-                    Socket_Server.RestartAfterListenError = true;
-                    Socket_Server.Start(socket =>
-                    {
-                        socket.OnOpen = () =>   //连接建立事件
-                        {
-                            string clientUrl = socket.ConnectionInfo.ClientIpAddress + ":" + socket.ConnectionInfo.ClientPort;
-                            Socket_Clients.Add(clientUrl, socket);
-                            CS_Msg Wel_Msg = new CS_Msg();
-                            Wel_Msg.MsgType = Msg_Type.Welcome.ToString();
-                            socket.Send(JsonConvert.SerializeObject(Wel_Msg));
-                        };
-                        socket.OnClose = () =>  //连接关闭事件
-                        {
-                            string clientUrl = socket.ConnectionInfo.ClientIpAddress + ":" + socket.ConnectionInfo.ClientPort;
-                            if (Socket_Clients.ContainsKey(clientUrl))
-                            {
-                                Socket_Clients.Remove(clientUrl);
-                            }
-                        };
-                        socket.OnMessage = message =>  //接受客户端网页消息事件
-                        {
-                            string clientUrl = socket.ConnectionInfo.ClientIpAddress + ":" + socket.ConnectionInfo.ClientPort;
-                            //Debug.WriteLine(DateTime.Now.ToString() + "|服务器:【收到】来客户端网页:" + clientUrl + "的信息：\n" + message);
-                            //socket.Send("Receive " + DateTime.Now.ToShortTimeString() + message);
-                        };
-                    });
-
-                    IntPtr ip = new WindowInteropHelper(this).Handle;
-                    if (Device.InitDevice(ip.ToInt32()) == 0)
-                    {
-                        return;
-                    }
+                    Boolean sb = bool.Parse(SetConfig.GetConfig(ShowMoreInfo.Name));
+                    ShowMoreInfo.IsChecked = sb;
                 }
-                catch (Exception ex)
+                ShowMoreInfo.Checked += ShowMoreChange;
+                ShowMoreInfo.Unchecked += ShowMoreChange;
+            }
+            //InitDevice
+            try
+            {
+                IntPtr ip = new WindowInteropHelper(this).Handle;
+                if (Device.InitDevice(ip.ToInt32()) == 0)
                 {
-                    MessageBox.Show(ex.Message, "Start Server Error");
+                    return;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    SIPG.Visibility = Visibility.Visible;
-                    LinkState.Visibility = Visibility.Visible;
-                    Socket_Client.ConnectAsync(new Uri("ws://127.0.0.1:9632"), ClientCT);
-                    
-
-                    
-                    ListeningMsg.RunWorkerAsync();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Start Client Error");
-                }
+                MessageBox.Show(ex.Message, "InitDevice");
             }
         }
        
@@ -179,124 +117,10 @@ namespace 来电提醒客户端
             if (msg == Device.WM_AD130MSG)
             {
                 OnDeviceMsg(wParam,lParam);
-                CS_Msg DevMsg = new CS_Msg();
-                DevMsg.MsgType = Msg_Type.DevMsg.ToString();
-                DevMsg.wParam = wParam.ToInt32();
-                DevMsg.Lparam = lParam.ToInt32();
-                string msgStr = JsonConvert.SerializeObject(DevMsg);
-                foreach (var Socket in Socket_Clients)
-                {
-                    Socket.Value.Send(msgStr);
-                }
             }
             return hwnd;
         }
 
-        private void GetServiceMsg(object _sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker BG = (BackgroundWorker)_sender;
-            while (Socket_Client.State == WebSocketState.Connecting)
-            {
-                BG.ReportProgress(1, "正在连接服务器");
-                Thread.Sleep(200);
-            }
-            BG.ReportProgress(0, (Socket_Client.State == WebSocketState.Open));
-
-            if (Socket_Client.State == WebSocketState.Open)
-            {
-                BG.ReportProgress(1, "已连接");
-            }
-            else if (Socket_Client.State == WebSocketState.Closed)
-            {
-                BG.ReportProgress(1, "未能连接到服务器");
-            }
-            else
-            {
-                BG.ReportProgress(1, Socket_Client.State.ToString());
-            }
-            while (!BG.CancellationPending && Socket_Client.State== WebSocketState.Open)
-            {
-                var result = new byte[1024];
-                Socket_Client.ReceiveAsync(new ArraySegment<byte>(result), ClientCT);
-
-                List<byte> lastbyte = new List<byte>();
-                foreach (var b in result)
-                {
-                    if (b != 0x00)
-                    {
-                        lastbyte.Add(b);
-                    }
-                }
-                byte[] rbs = new byte[lastbyte.Count];
-                for (int i = 0; i < lastbyte.Count; i++)
-                {
-                    rbs[i] = lastbyte[i];
-                }
-
-                var str = Encoding.UTF8.GetString(rbs, 0, rbs.Length);
-                BG.ReportProgress(2, str);
-                Thread.Sleep(500);
-            }
-        }
-        private void SyncStatsChange_ReportProgress(object sender, ProgressChangedEventArgs e)
-        {
-            if (e.ProgressPercentage == 0)
-            {
-                LinkState.IsChecked = (bool)e.UserState;
-                ConnectBTN.IsEnabled = true;
-            }
-            else if(e.ProgressPercentage==1)
-            {
-                DiaMsg.Content = (string)e.UserState;
-            }
-            else if (e.ProgressPercentage == 2)
-            {
-                string MSG_Str = (string)e.UserState;
-                Debug.WriteLine("MSG_Str:  " + MSG_Str);
-                JObject mj = JsonConvert.DeserializeObject<JObject>(MSG_Str);
-                CS_Msg msg = JsonConvert.DeserializeObject<CS_Msg>(MSG_Str);
-                Msg_Type mt = Msg_Type.unknow;
-                try
-                {
-                    mt = (Msg_Type)Enum.Parse(typeof(Msg_Type), msg.MsgType);
-                }
-                catch
-                {
-                    mt = (Msg_Type)Enum.Parse(typeof(Msg_Type), mj["MsgType"].ToString());
-                }
-                
-                
-                switch (mt)
-                {
-                    case Msg_Type.Welcome:
-                        {
-                            try
-                            {
-                                this.ConnectBTN.Visibility = Visibility.Collapsed;
-                            }
-                            catch
-                            { }
-                            break;
-                        }
-                    case Msg_Type.channelSet:
-                        {
-                            if (msg.channelConfig.Count == 4)
-                            {
-                                for (int i = 0; i < msg.channelConfig.Count; i++)
-                                {
-                                    PhoneStateList[i].ChannelName = msg.channelConfig[i].ToString();
-                                }
-                            }
-                            break;
-                        }
-                    case Msg_Type.DevMsg:
-                        {
-                            OnDeviceMsg((IntPtr)msg.wParam, (IntPtr)msg.Lparam);
-                            break;
-                        }
-                }
-            }
-        }
         private void OnDeviceMsg(IntPtr wParam, IntPtr Lparam)
         {
             int nMsg = new int();
@@ -475,6 +299,7 @@ namespace 来电提醒客户端
 
                         int nLen = Device.GetCallerID(nChannel, szCallerID);
                         PhoneStateList[nChannel].CallerID = szCallerID.ToString();
+                        PhoneStateList[nChannel].ComName = szCallerID.ToString();
                         break;
                     }
                 case Device.MCU_DEVICECODE: // 0X14,  返回设备码 
@@ -487,6 +312,7 @@ namespace 来电提醒客户端
                         StringBuilder szDialDigit = new StringBuilder(128);
                         Device.GetDialDigit(nChannel, szDialDigit);
                         PhoneStateList[nChannel].DialedNum = szDialDigit.ToString();
+                        PhoneStateList[nChannel].ComName = szDialDigit.ToString();
                         break;
                     }
                 case Device.MCU_BACKCPUVER://0x0D,  返回设备版本 
@@ -599,41 +425,6 @@ namespace 来电提醒客户端
             }
         }
 
-        private void isClientChange(object sender, RoutedEventArgs e)
-        {
-            CheckBox isClientCB = (CheckBox)sender;
-            string r = SetConfig.SaveConfig(isClientCB.Name, isClientCB.IsChecked.ToString());
-            if (string.IsNullOrWhiteSpace(r))
-            {
-                isClientCB.IsChecked = false;
-            }
-            else
-            {
-                Boolean b = bool.Parse(r);
-                isClientCB.IsChecked = b;
-            }
-
-            if ((bool)isClientCB.IsChecked)
-            {
-                try
-                {
-                    LinkState.Visibility = Visibility.Visible;
-                    SIPG.Visibility = Visibility.Visible;
-                }
-                catch
-                { }
-            }
-            else
-            {
-                try
-                {
-                    LinkState.Visibility = Visibility.Hidden;
-                    SIPG.Visibility = Visibility.Collapsed;
-                }
-                catch
-                { }
-            }
-        }
 
         private void CloseDo(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -653,28 +444,6 @@ namespace 来电提醒客户端
                 Boolean b = bool.Parse(r);
                 cb.IsChecked = b;
             }
-        }
-
-        private void ReConnection(object sender, RoutedEventArgs e)
-        {
-            ConnectBTN.IsEnabled = false;
-            while (ListeningMsg.IsBusy)
-            {
-                ListeningMsg.CancelAsync();
-            }
-            while (Socket_Client.State == WebSocketState.Connecting)
-            {
-                DiaMsg.Content = "is Connection,Can't Stop";
-                Thread.Sleep(100);
-            }
-            if (Socket_Client.State == WebSocketState.Open)
-            {
-                Socket_Client.CloseAsync( WebSocketCloseStatus.NormalClosure,"",ClientCT);
-            }
-            Socket_Client.Abort();
-            Socket_Client = new ClientWebSocket();
-            Socket_Client.ConnectAsync(new Uri("ws://127.0.0.1:9632"), ClientCT);
-            ListeningMsg.RunWorkerAsync();
         }
     }
 }

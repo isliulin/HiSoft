@@ -1,0 +1,44 @@
+﻿<Window x:Class="来电提醒客户端.ClientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:来电提醒客户端"
+        mc:Ignorable="d"
+        Title="Client" Height="450" Width="800" Loaded="MainWindowLoaded" Icon="Res/FileIcon.png" WindowStartupLocation="CenterScreen" Closing="CloseDo">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <CheckBox x:Name="LinkState" VerticalAlignment="Center" IsEnabled="False"/>
+                <CheckBox x:Name="ShowMoreInfo" Content="显示设备附加信息" VerticalAlignment="Center" />
+                <Label Content="服务器地址" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <TextBox x:Name="ServiceIP" Text="192.168.1.254" VerticalAlignment="Center"/>
+                <Button Content="连接" x:Name="ConnectBTN" Click="ReConnection" />
+                <Label x:Name="DiaMsg"/>
+                <Label x:Name="ClientNo" HorizontalAlignment="Right" />
+
+            </StackPanel>
+
+            <ListView x:Name="PhoneStateListView" ItemsSource="{Binding }">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="通道" Width="30" DisplayMemberBinding="{Binding Channel}" />
+                        <GridViewColumn Header="通道名称" Width="80" DisplayMemberBinding="{Binding ChannelName}" />
+                        <GridViewColumn Header="设备码" Width="0" DisplayMemberBinding="{Binding DeviceCode}"/>
+                        <GridViewColumn Header="设备" Width="60" DisplayMemberBinding="{Binding DeviceInfo}"/>
+                        <GridViewColumn Header="线路状态" Width="120" DisplayMemberBinding="{Binding LineState}"/>
+                        <GridViewColumn Header="来电号码" Width="100" DisplayMemberBinding="{Binding CallerID}"/>
+                        <GridViewColumn Header="播出号码" Width="100" DisplayMemberBinding="{Binding DialedNum}"/>
+                        <GridViewColumn Header="往来单位/联系人" Width="180" DisplayMemberBinding="{Binding ComName}"/>
+                        <GridViewColumn Header="漏接" Width="60" DisplayMemberBinding="{Binding MissedCall}"/>
+                        <GridViewColumn Header="通话时间" Width="60" DisplayMemberBinding="{Binding TalkTime}"/>
+                        <GridViewColumn Header="开始时间" Width="60" DisplayMemberBinding="{Binding time1}"/>
+                        <GridViewColumn Header="截至时间" Width="60" DisplayMemberBinding="{Binding time2}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <RichTextBox x:Name="sMsg" VerticalScrollBarVisibility="Auto"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

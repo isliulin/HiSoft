@@ -1,6 +1,6 @@
-﻿namespace PhoneInfo
+﻿namespace PhoneWatcher
 {
-    partial class PhoneWatcherService
+    partial class MainPhoneService
     {
         /// <summary> 
         /// 必需的设计器变量。
@@ -29,13 +29,9 @@
         private void InitializeComponent()
         {
             // 
-            // PhoneWatcherService
+            // MainPhoneService
             // 
-            this.CanHandlePowerEvent = true;
-            this.CanHandleSessionChangeEvent = true;
-            this.CanPauseAndContinue = true;
-            this.CanShutdown = true;
-            this.ServiceName = "PhoneWatcherService";
+            this.ServiceName = "Service1";
 
         }
 

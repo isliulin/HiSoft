@@ -30,6 +30,9 @@ namespace 来电提醒客户端
         //播出号码
         public string DialedNum { get; set; }
 
+        private string Number { get; set; }
+        public string ComName { get { return SetConfig.ComName(Number); } set { if (Number != value) { Number = value; } } }
+
         //漏接电话
         public string MissedCall { get; set; }
 
@@ -68,9 +71,6 @@ namespace 来电提醒客户端
         public const int DEVICE_AD130 = 1;
         public const int DEVICE_AD230 = 2;
         public const int DEVICE_AD430 = 3;
-
-
-
 
         public const int MAX_DEVICE = 0x04;
 
@@ -150,7 +150,7 @@ namespace 来电提醒客户端
 
         public const int WM_AD130MSG = 1024 + 220;
 
-        //TAGSTATE[] m_State = new TAGSTATE[MAX_DEVICE];
+
 
         [DllImport("AD130Device.dll", EntryPoint = "AD130_InitDevice")]
         public static extern int InitDevice(int hWnd);
@@ -254,7 +254,6 @@ namespace 来电提醒客户端
 
 
 
-
         // Start monitor
         [DllImport("AD130Device.dll", EntryPoint = "AD130_StartMonitor")]
         public static extern int StartMonitor(int dwChannel);
@@ -295,6 +294,4 @@ namespace 来电提醒客户端
         [DllImport("AD130Device.dll", EntryPoint = "AD130_HangupPhone")]
         public static extern int HangupPhone(int dwChannel);
     }
-
-
 }

@@ -4,18 +4,35 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Platforms>AnyCPU;x86</Platforms>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>XYZoneYang.pfx</AssemblyOriginatorKeyFile>
-    <ApplicationIcon>Apps_file.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>HiSoftYang.pfx</AssemblyOriginatorKeyFile>
+    <ApplicationIcon>Res\Apps_file.ico</ApplicationIcon>
+    <!--
+    <PublishSingleFile>true</PublishSingleFile>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    -->
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>E:\VisualStudio\ProjectOut\CRMPhone\</OutputPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutputPath>E:\VisualStudio\ProjectOut\CRMPhone\</OutputPath>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <OutputPath>E:\VisualStudio\ProjectOut\CRMPhone\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <OutputPath>E:\VisualStudio\ProjectOut\CRMPhone\Client\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,11 +48,17 @@
 
   <ItemGroup>
     <PackageReference Include="Fleck" Version="1.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FileIcon.png" />
+    <Resource Include="Res\FileIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="来电提醒服务端.csproj" />
   </ItemGroup>
 
 </Project>
