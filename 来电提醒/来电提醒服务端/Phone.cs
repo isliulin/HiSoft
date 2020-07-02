@@ -1,49 +1,70 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace 来电提醒服务端
 {
-    public class Phone
+    public class CallInfo
     {
         //通道
         public int Channel { get; set; } = 0;
 
         //通道名称
         public string ChannelName { get; set; } = "";
+        //通话方向
+        public string CallType { get; set; }
+        //电话号码
+        public string PhoneNumber { get; set; }
+        //单位信息
+        public string ComName { get; set; }
 
+        //漏接电话
+        public string MissedCall { get; set; }
+        //通话时间
+        public string TalkTime { get; set; }
+        public DateTime timeS { get; set; }
+        public DateTime timeE { get; set; }
+
+        public long timeS_UTC { get; set; }
+        public long timeE_UTC { get; set; }
+
+        //录音信息
+        public string RecFileName;
+
+        public int RecErrCode;
+        public override string ToString()
+        {
+            return JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(JsonConvert.SerializeObject(this)).ToString();
+        }
+    }
+
+    public class Phone:CallInfo
+    {
         //设备码
         public string DeviceCode { get; set; } = "";
 
         //设备状态
         public string DeviceInfo { get; set; } = "";
 
-
         //线路状态
         public string LineState { get; set; }
 
+        /*
         //呼入号码
-        private string inNumber { get; set; }
-        public string CallerID { get { return inNumber; } set { inNumber = value;PhoneNumber = "[in]" + value; } }
+        public string CallerID { get; set; }
         //播出号码
-        private string OutNumber { get; set; }
-        public string DialedNum { get { return OutNumber; } set { OutNumber = value;PhoneNumber = "[Out]" + value; } }
+        public string DialedNum { get; set; }
         //PhoneNumber
-        public string PhoneNumber { get; set; }
-
-        private string Number { get; set; }
-        public string ComName { get { return SetConfig.ComName(Number); } set { if (Number != value) { Number = value; } } }
-
-        //漏接电话
-        public string MissedCall { get; set; }
-
-        //通话时间
-        public string TalkTime { get; set; }
-        public DateTime timeS { get; set; }
-        public DateTime timeE { get; set; }
+        */
+        
+        public string MicName { get { StringBuilder msb = new StringBuilder(); Device.GetDeviceMicrophoneName(Channel, msb);return msb.ToString();  } set { } }
+        public string SpkName { get { StringBuilder msb = new StringBuilder(); Device.GetDeviceSpeakerName(Channel, msb); return msb.ToString(); } set { } }
 
 
         public bool bChannelState;
@@ -58,9 +79,13 @@ namespace 来电提醒服务端
         public bool bHookOff;
         public int iDeviceType;
 
+        public BackgroundWorker SavePhoneRecord = new BackgroundWorker();
+
         public Phone(int _Channel)
         {
             Channel = _Channel;
+            SavePhoneRecord.DoWork += SavePhoneRecoreingFile;
+            SavePhoneRecord.WorkerReportsProgress = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -68,10 +93,135 @@ namespace 来电提醒服务端
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        void SavePhoneRecoreingFile(object sender, DoWorkEventArgs e)
+        {
+            string FirstNoteVoice = "通话录音前缀.wav";
+            
+            int AutoRecMaxSecond = 60 * 2;
+            try
+            {
+                string AutoRecMaxSecondStr = SetConfig.GetConfig("AutoRecMaxSecond");
+                if (!string.IsNullOrWhiteSpace(AutoRecMaxSecondStr))
+                {
+                    AutoRecMaxSecond = int.Parse(AutoRecMaxSecondStr);
+                }
+            }
+            catch
+            {
+                AutoRecMaxSecond = 60 * 2;
+            }
+            
+            CallInfo CI = this;
+
+            //收集呼叫信息
+            if (bAutodial||CallType==Device.CallType_AutoRec)
+            {
+                CallType = Device.CallType_AutoRec;
+                FirstNoteVoice = "答录机前缀.wav";
+            }
+
+            //停止设备现有操作
+            int fsr = Device.StopRecordFile(Channel);
+            if (bLinePlay)
+            {
+                if (Device.StopPlayFile(Channel, Device.LINE_PLAY) != 0)
+                {
+                    bLinePlay = false;
+                }
+                Device.EnablePlayFile(Channel, Device.LINE_PLAY, 0);
+            }
+            //如果是呼入或者自动接听的，播放提示音
+            if (CallType == Device.CallType_In || CallType == Device.CallType_AutoRec)
+            {
+                Boolean oldLineBustStat = bLineBusy;
+                /*
+                if (Device.SetLine(Channel, Device.CHANNE_LINEBUSY) != 0)
+                {
+                    bLineBusy = true;
+                }
+                */
+                if (Device.EnablePlayFile(Channel, Device.LINE_PLAY, 1) != 0)
+                {
+                    if (Device.StartPlayFile(Channel, Device.LINE_PLAY, FirstNoteVoice.ToCharArray()) != 0)
+                    {
+                        bLinePlay = true;
+                    }
+                    else
+                    {
+                        Device.EnablePlayFile(Channel, Device.LINE_PLAY, 0);
+                    }
+                }
+                /*
+                if (!bLinePlay)
+                {
+                    if (Device.SetLine(Channel, Device.CHANNEL_LINEFREE) != 0)
+                    {
+                        bLineBusy = oldLineBustStat;
+                    }
+                }
+                */
+            }
+
+            BackgroundWorker bw = sender as BackgroundWorker;
+            //bw.ReportProgress(Channel, "Start Rec Work @"+DateTime.Now.ToString());
+
+            //bw.ReportProgress(Channel, "Init Stop Recording :" + fsr.ToString());
+            Thread.Sleep(500);
+            //等待提示音播放完成
+            while (bLinePlay)
+            {
+                Thread.Sleep(100);
+            }
+            //设置录音文件缓存路径及文件名
+            RecFileName = "E:\\PhoneCall_" + string.Format("{0:D2}", Channel + 1) + "_"+DateTime.Now.ToString("yyyyMMdd_HHmmss")+"_Record.wav";
+            //发送录音请求
+            RecErrCode = Device.StartRecordFile(Channel, RecFileName.ToCharArray());
+            CI = this;
+            bw.ReportProgress(Channel, CI.ToString());
+            if (CI.RecErrCode != 0)
+            {
+                bRecord = true;
+            }
+            int t = 0;
+            //等待挂机
+            while (bHookOff)
+            {
+                Thread.Sleep(500);
+                bw.ReportProgress(Channel, CI.ToString());
+                if (bAutodial)
+                {
+                    t += 500;
+                    Debug.WriteLine("t:" + t.ToString() + "  | AutoRecMaxSecond:" + AutoRecMaxSecond.ToString()+"     "+ (AutoRecMaxSecond*1000).ToString());
+                    if (Device.GetState(Channel) == Device.HOOKON_POSITIVEPOLARITY || Device.GetState(Channel) == Device.HOOKON_NEGATIVEPOLARITY|| t >= 1000 * AutoRecMaxSecond)
+                    {
+                        if (Device.HangupPhone(Channel) != 0)
+                        {
+                            bAutodial = false;
+                            Device.StopDetectBusytone(Channel);
+                        }
+                    }
+                }
+            }
+
+            //停止录音
+            if (Device.StopRecordFile(Channel) != 0 || !bRecord)
+            {
+                bRecord = false;
+            }
+            CI = this;
+            bw.ReportProgress(Channel+100, CI.ToString());
+        }
     }
+
+    
 
     public class Device
     {
+        public const string CallType_In = "In";
+        public const string CallType_Out = "Out";
+        public const string CallType_AutoRec = "AutoRec";
+
         public const int DEVICE_AD130 = 1;
         public const int DEVICE_AD230 = 2;
         public const int DEVICE_AD430 = 3;
@@ -297,5 +447,13 @@ namespace 来电提醒服务端
         // Hang up phone, just can hang up phone that you picked up phone via call the function AD130_PickupPhone 
         [DllImport("AD130Device.dll", EntryPoint = "AD130_HangupPhone")]
         public static extern int HangupPhone(int dwChannel);
+
+        // Start detecting busy tone
+        [DllImport("AD130Device.dll", EntryPoint = "AD130_StartDetectBusytone")]
+        public static extern int StartDetectBusytone(int dwChannel);
+
+        // Stop detecting busy tone
+        [DllImport("AD130Device.dll", EntryPoint = "AD130_StopDetectBusytone")]
+        public static extern int StopDetectBusytone(int dwChannel);
     }
 }

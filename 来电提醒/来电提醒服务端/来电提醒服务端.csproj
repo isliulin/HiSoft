@@ -35,14 +35,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="AD130Device.dll" />
     <None Remove="FileIcon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="AD130Device.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -50,6 +43,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Panuon.UI.Silver" Version="2.0.0.8-alpha" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +52,39 @@
 
   <ItemGroup>
     <Folder Include="SQLDB\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Caliburn.Micro">
+      <HintPath>..\..\..\..\..\Temp\PanuonUI.Silver-2.0.0\UIBrowser\UIBrowser\bin\Debug\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit">
+      <HintPath>..\..\..\..\..\Temp\PanuonUI.Silver-2.0.0\UIBrowser\UIBrowser\bin\Debug\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
+    <Reference Include="UIBrowser.Code">
+      <HintPath>..\..\..\..\..\Temp\PanuonUI.Silver-2.0.0\UIBrowser\UIBrowser\bin\Debug\UIBrowser.Code.dll</HintPath>
+    </Reference>
+    <Reference Include="UIBrowser.Core">
+      <HintPath>..\..\..\..\..\Temp\PanuonUI.Silver-2.0.0\UIBrowser\UIBrowser\bin\Debug\UIBrowser.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="UIBrowser.Palette">
+      <HintPath>..\..\..\..\..\Temp\PanuonUI.Silver-2.0.0\UIBrowser\UIBrowser\bin\Debug\UIBrowser.Palette.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AD130Device.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Win7运行.net Core程序 系统补丁.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="答录机前缀.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="通话录音前缀.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -1,43 +1,133 @@
-﻿<Window x:Class="来电提醒服务端.ServerWindow"
+﻿<Window xmlns:Views="clr-namespace:UIBrowser.Palette.Views;assembly=来电提醒服务端"   x:Class="来电提醒服务端.ServerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
         xmlns:local="clr-namespace:来电提醒服务端"
         mc:Ignorable="d"
-        Title="Server" Height="450" Width="800" Loaded="MainWindowLoaded" Icon="Res/FileIcon.png" WindowStartupLocation="CenterScreen" Closing="CloseDo">
+        Title="Server" Height="450" Width="1020" Loaded="MainWindowLoaded" Icon="Res/FileIcon.png" WindowStartupLocation="CenterScreen" Closing="CloseDo">
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <CheckBox x:Name="LinkState" VerticalAlignment="Center" IsEnabled="False"/>
-                <CheckBox x:Name="ShowMoreInfo" Content="显示设备附加信息" VerticalAlignment="Center" />
-                <Label x:Name="DiaMsg"/>
-            </StackPanel>
 
-            <ListView x:Name="PhoneStateListView" ItemsSource="{Binding }">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="通道" Width="30" DisplayMemberBinding="{Binding Channel}" />
-                        <GridViewColumn Header="通道名称" Width="80" DisplayMemberBinding="{Binding ChannelName}" />
-                        <GridViewColumn Header="设备码" Width="0" DisplayMemberBinding="{Binding DeviceCode}"/>
-                        <GridViewColumn Header="设备" Width="60" DisplayMemberBinding="{Binding DeviceInfo}"/>
-                        <GridViewColumn Header="线路状态" Width="120" DisplayMemberBinding="{Binding LineState}"/>
+        <TabControl pu:TabControlHelper.TabControlStyle="Card">
+            <TabItem Header="监视器">
+                <StackPanel Orientation="Vertical" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <!--
-                        <GridViewColumn Header="来电号码" Width="100" DisplayMemberBinding="{Binding CallerID}"/>
-                        <GridViewColumn Header="播出号码" Width="100" DisplayMemberBinding="{Binding DialedNum}"/>
+                        <CheckBox x:Name="LinkState" VerticalAlignment="Center" IsEnabled="False"/>
+                        <CheckBox x:Name="ShowMoreInfo" Content="显示设备附加信息" VerticalAlignment="Center" />
                         -->
-                        <GridViewColumn Header="号码" Width="100" DisplayMemberBinding="{Binding PhoneNumber}"/>
-                        
-                        <GridViewColumn Header="往来单位/联系人" Width="180" DisplayMemberBinding="{Binding ComName}"/>
-                        <GridViewColumn Header="漏接" Width="60" DisplayMemberBinding="{Binding MissedCall}"/>
-                        <GridViewColumn Header="通话时间" Width="60" DisplayMemberBinding="{Binding TalkTime}"/>
-                        <GridViewColumn Header="开始时间" Width="60" DisplayMemberBinding="{Binding timeS}"/>
-                        <GridViewColumn Header="截至时间" Width="60" DisplayMemberBinding="{Binding timeE}"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-            <RichTextBox x:Name="sMsg" VerticalScrollBarVisibility="Auto"/>
-        </StackPanel>
+                        <Label x:Name="DiaMsg"/>
+                    </StackPanel>
+
+                    <ListView x:Name="PhoneStateListView" ItemsSource="{Binding }">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="通道" Width="0" DisplayMemberBinding="{Binding Channel}" />
+                                <GridViewColumn Header="通道名称" Width="80" DisplayMemberBinding="{Binding ChannelName}"/>
+                                <!--
+                                <GridViewColumn Header="设备码" Width="0" DisplayMemberBinding="{Binding DeviceCode}"/>
+                                <GridViewColumn Header="设备" Width="60" DisplayMemberBinding="{Binding DeviceInfo}"/>
+                                -->
+                                <GridViewColumn Header="线路状态" Width="120" DisplayMemberBinding="{Binding LineState}"/>
+                                <GridViewColumn Header="呼叫状态" Width="70" DisplayMemberBinding="{Binding CallType}"/>
+                                <!--
+                                <GridViewColumn Header="来电号码" Width="150" DisplayMemberBinding="{Binding CallerID}"/>
+                                <GridViewColumn Header="播出号码" Width="150" DisplayMemberBinding="{Binding DialedNum}"/>
+                                -->
+                                <GridViewColumn Header="号码" Width="120" DisplayMemberBinding="{Binding PhoneNumber}"/>
+                                <GridViewColumn Header="往来单位/联系人" Width="180" DisplayMemberBinding="{Binding ComName}"/>
+                                <GridViewColumn Header="漏接" Width="120" DisplayMemberBinding="{Binding MissedCall}"/>
+                                
+                                <GridViewColumn Header="通话时间" Width="60" DisplayMemberBinding="{Binding TalkTime}"/>
+                                <GridViewColumn Header="开始时间" Width="120" DisplayMemberBinding="{Binding timeS}"/>
+                                <GridViewColumn Header="截至时间" Width="120" DisplayMemberBinding="{Binding timeE}"/>
+                                <!--
+                                <GridViewColumn Header="Mic" Width="0" DisplayMemberBinding="{Binding MicName}"/>
+                                <GridViewColumn Header="Speaker" Width="0" DisplayMemberBinding="{Binding SpkName}"/>
+                                -->
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="25*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" x:Name="mMsg0" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="mMsg1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                        <TextBlock Grid.Row="0" Grid.Column="2" x:Name="mMsg2" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                        <TextBlock Grid.Row="0" Grid.Column="3" x:Name="mMsg3" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    </Grid>
+                    <RichTextBox x:Name="sMsg" VerticalScrollBarVisibility="Auto"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="参数设置">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ConfGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="10*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Grid.Column="1" Content="线路1名称" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Label Grid.Row="0" Grid.Column="3" Content="线路2名称" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="1" Content="线路3名称" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="3" Content="线路4名称" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="0" Grid.Column="2" x:Name="LanName1" pu:TextBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" TextChanged="ConfigValueChange" />
+                    <TextBox Grid.Row="0" Grid.Column="4" x:Name="LanName2" pu:TextBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" TextChanged="ConfigValueChange" />
+                    <TextBox Grid.Row="1" Grid.Column="2" x:Name="LanName3" pu:TextBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox Grid.Row="1" Grid.Column="4" x:Name="LanName4" pu:TextBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+
+                    <Label Grid.Row="2" Grid.Column="1" Content="响铃触发答录机"  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                        <Label  Content="响铃"/>
+                        <Label  Content="8" x:Name="AutoRecRingCountShow"/>
+                        <Label  Content="秒后自动接听,为0时不触发。"/>
+                    </StackPanel>
+
+                    <Slider Grid.Row="2" Grid.Column="2" SmallChange="1" x:Name="AutoRecRingCount" Value="0" TickPlacement="Both"  HorizontalAlignment="Stretch" VerticalAlignment="Center" ValueChanged="ConfigValueChange" AutoToolTipPlacement="BottomRight" />
+                    <Label Grid.Row="2" Grid.Column="3" Content="答录机录音时长(秒)"  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="2" Grid.Column="4" x:Name="AutoRecMaxSecond" pu:TextBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center"  TextChanged="ConfigValueChange"/>
+                    <Label Grid.Row="3" Grid.Column="1" Content="录音文件存储位置"  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="3" x:Name="RecFilePath" IsEnabled="False" Text="\RecFiles\" pu:TextBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center"  TextChanged="ConfigValueChange" />
+                    <Button Grid.Row="3" Grid.Column="4" Content="……" Width="50" Height="30"  HorizontalAlignment="Right" VerticalAlignment="Center" pu:ButtonHelper.ClickStyle="Sink" pu:ButtonHelper.ButtonStyle="Link"/>
+                    <Label Grid.Row="4" Grid.Column="1" Content="来电提醒方式"  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="4" Grid.Column="2" x:Name="NoticeType" pu:ComboBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="ConfigValueChange"  >
+                        <ComboBoxItem Content="程序弹窗"/>
+                        <ComboBoxItem Content="企业QQ消息"/>
+                        <ComboBoxItem Content="致远OA消息"/>
+                        <ComboBoxItem Content="外部程序"/>
+                        <ComboBoxItem Content="不提醒"/>
+                    </ComboBox>
+                    <Label Grid.Row="4" Grid.Column="3" Content="录音文件上传"  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="4" Grid.Column="4" x:Name="RecFileUploadType" pu:ComboBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="ConfigValueChange" >
+                        <ComboBoxItem Content="到致远OA"/>
+                        <ComboBoxItem Content="不上传"/>
+                    </ComboBox>
+                    <Label Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" x:Name="ConfMsg" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    <!--
+                    <pu:DateTimePicker />
+                    -->
+                </Grid>
+            </TabItem>
+        </TabControl>
+        
 
     </Grid>
 </Window>

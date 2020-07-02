@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Panuon.UI.Silver;
 
 namespace 来电提醒服务端
 {
@@ -14,43 +15,6 @@ namespace 来电提醒服务端
 
         public static string SQLConnStr = "";
 
-        public static string ComName(string Number)
-        {
-            if (string.IsNullOrWhiteSpace(Number))
-            {
-                return "Null";
-            }
-            else if (Number == "7")
-            {
-                return "公司名称";
-            }
-            else
-            {
-                SQLConfig sc = new SQLConfig();
-                sc.SQL_URL = "192.168.100.254";
-                //sc.SQL_Port = "1433";
-                sc.SQL_User = "sa";
-                sc.SQL_Pwd = "Fjkdashg@3344";
-
-                string r = "^_^";
-                using (SqlConnection connection = new SqlConnection(sc.SQL_ConnStr))
-                {
-                    string sql = string.Format("SELECT top 3 '【' +[field0012] + '】' +[field0002] FROM [HiOA].[dbo].[formmain_0022] WHERE field0008 like '%{0}%' or field0009 LIKE '%{0}%' or field0010 LIKE '%{0}%'  for xml path('')", Number);
-                    SqlCommand command = new SqlCommand(sql, connection);
-                    connection.Open();
-                    
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Console.WriteLine(String.Format("{0}, {1}", reader[0], reader[1]));
-                            r = String.Format("{0}, {1}",reader[0], reader[1]);
-                        }
-                    }
-                }
-                return r;
-            }
-        }
         public static string SaveConfig(string Name, string Value)
         {
             try
@@ -59,11 +23,13 @@ namespace 来电提醒服务端
                 RegistryKey software = key.CreateSubKey("software\\" + ServiceName);
                 software = key.OpenSubKey("software\\" + ServiceName, true);
                 software.SetValue(Name, Value);
-                Debug.WriteLine(Name + " : " + Value);
+                NoticeX.Show(Name + " = " + Value, "保存系统参数", MessageBoxIcon.Success, 1000*3);
+                //Debug.WriteLine(Name + " : " + Value);
             }
             catch(Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                NoticeX.Show(Name + " = " + Value+"\n"+ex.Message, "保存系统参数失败",MessageBoxIcon.Error,1000*10);
+                //Debug.WriteLine(ex.Message);
             }
             return GetConfig(Name);
             
@@ -75,11 +41,23 @@ namespace 来电提醒服务端
                 RegistryKey key = Registry.CurrentUser;
                 RegistryKey software = key.CreateSubKey("software\\" + ServiceName);
                 software = key.OpenSubKey("software\\" + ServiceName, true);
-                Debug.WriteLine(Name + " : " + software.GetValue(Name).ToString());
-                return software.GetValue(Name).ToString();
+                
+                foreach (string na in software.GetValueNames())
+                {
+                    if (Name == na)
+                    {
+                        //Debug.WriteLine(Name + " : " + software.GetValue(Name).ToString());
+                        return software.GetValue(Name).ToString();
+                    }
+                    //Debug.Write("|" + na);
+                }
+                NoticeX.Show("参数名："+Name+"\n 未配置", "读取系统参数失败", MessageBoxIcon.Error, 1000*2);
+                Debug.WriteLine(Name + " : Not Set");
+                return "";
             }
             catch(Exception ex)
             {
+                NoticeX.Show("参数名：" + Name + "\n" + ex.Message, "读取系统参数失败", MessageBoxIcon.Error, 1000*10);
                 return "";
             }
         }
