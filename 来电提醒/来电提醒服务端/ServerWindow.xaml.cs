@@ -22,6 +22,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Panuon.UI.Silver;
+using System.CodeDom;
+using System.Windows.Controls.Primitives;
+using System.IO;
+using System.Web;
 
 public struct AD130DEVICEPARAMETER
 {
@@ -67,7 +71,7 @@ namespace 来电提醒服务端
             {
                 Phone nPhone = new Phone(i);
                 nPhone.SavePhoneRecord.ProgressChanged += PhoneRecoreingStepRep;
-                string pn = SetConfig.GetConfig("LanName" + (i + 1).ToString());
+                string pn = SetConfig.GetConfig("LanName" + (i + 1).ToString(),"线路"+(i+1).ToString());
                 if (!string.IsNullOrWhiteSpace(pn))
                 {
                     nPhone.ChannelName = pn;
@@ -82,7 +86,6 @@ namespace 来电提醒服务端
             switch (e.ProgressPercentage)
             {
                 case 0:
-
                     mMsg0.Inlines.Clear();
                     mMsg0.Inlines.Add("\r\n"+e.UserState.ToString());
                     break;
@@ -103,7 +106,11 @@ namespace 来电提醒服务端
                 default:
                     if (e.ProgressPercentage >= 100)
                     {
-                        NoticeX.Show(e.UserState.ToString(), "录音完成，准备上传", MessageBoxIcon.Success);
+                        Phone nphone = JsonConvert.DeserializeObject<Phone>(e.UserState.ToString());
+
+                        BGWork.UploadRecFile Upload = new BGWork.UploadRecFile(e.ProgressPercentage - 100, nphone.RecFileName);
+                        Upload.Running();
+                        //NoticeX.Show(e.UserState.ToString(), "录音完成，准备上传", MessageBoxIcon.Success);
                     }
                     break;
             }
@@ -115,47 +122,6 @@ namespace 来电提醒服务端
         }
         private void MainWindowLoaded(object sender, RoutedEventArgs e)
         {
-            //获取设置参数
-            foreach (object SC in ConfGrid.Children)
-            {
-                if (SC.GetType() == typeof(System.Windows.Controls.TextBox))
-                {
-                    TextBox sctb = SC as TextBox;
-                    Debug.WriteLine(SC.GetType().ToString() + "  |" + sctb.Name);
-                    sctb.Text=SetConfig.GetConfig(sctb.Name);
-                }
-                if (SC.GetType() == typeof(Slider))
-                {
-                    Slider scs = SC as Slider;
-                    Debug.WriteLine(SC.GetType().ToString() + "  |" + scs.Name);
-
-                    try
-                    {
-                        int sv = int.Parse(SetConfig.GetConfig(scs.Name));
-                        scs.Value = sv;
-                    }
-                    catch
-                    {
-                        scs.Value = 0;
-                    }
-                    //初始化提示文本
-                    if (scs.Name == AutoRecRingCount.Name)
-                    {
-                        AutoRecRingCountShow.Content = scs.Value;
-                    }
-                }
-                if (SC.GetType() == typeof(ComboBox))
-                {
-                    ComboBox sccb = SC as ComboBox;
-                    Debug.WriteLine(SC.GetType().ToString() + "  |" + sccb.Name);
-                    string sccbcs = SetConfig.GetConfig(sccb.Name);
-                    if (!string.IsNullOrWhiteSpace(sccbcs))
-                    {
-                        sccb.SelectedIndex = int.Parse(sccbcs);
-                    }  
-                }
-            }
-            
             //初始化硬件设备 ad130录音盒
             //InitDevice
             try
@@ -171,7 +137,125 @@ namespace 来电提醒服务端
                 MessageBox.Show(ex.Message, "InitDevice");
             }
         }
-       
+
+        //获取设置参数
+        private void ConfigWindowLoaded(object sender, RoutedEventArgs e)
+        {
+            List<object> ConfigObjList = new List<object>();
+            //获取参数控件
+            if (sender.GetType() == typeof(Grid))
+            {
+                Grid SenderTab = sender as Grid;
+                foreach (object ConfigObject in SenderTab.Children)
+                {
+                    ConfigObjList.Add(ConfigObject);
+                }
+            }
+            if (sender.GetType() == typeof(UniformGrid))
+            {
+                UniformGrid SenderTab = sender as UniformGrid;
+                foreach (object ConfigObject in SenderTab.Children)
+                {
+                    ConfigObjList.Add(ConfigObject);
+                }
+            }
+            if (sender.GetType() == typeof(Grid)|| sender.GetType() == typeof(UniformGrid))
+            {
+                
+            }
+            //获取(参数)控件值
+            foreach (object ConfigObj in ConfigObjList)
+            {
+                //Debug.WriteLine(ConfigObj.GetType());
+                if (ConfigObj.GetType() == typeof(TextBox))
+                {
+                    TextBox ConfigControl = ConfigObj as TextBox;
+                    if (!string.IsNullOrEmpty(ConfigControl.Name))
+                    {
+                        ConfigControl.Text = SetConfig.GetConfig(ConfigControl.Name,"");
+                    }
+                }
+                if (ConfigObj.GetType() == typeof(Slider))
+                {
+                    Slider ConfigControl = ConfigObj as Slider;
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(ConfigControl.Name))
+                        {
+                            if (ConfigControl.IsSnapToTickEnabled)
+                            {
+                                int sv = SetConfig.GetConfig(ConfigControl.Name,0);
+                                ConfigControl.Value = sv;
+                            }
+                            else
+                            {
+                                double sv = double.Parse(SetConfig.GetConfig(ConfigControl.Name,"0"));
+                                ConfigControl.Value = sv;
+                            }
+                            //Debug.WriteLine("加载参数" + ConfigControl.Name + ":" + sv);
+                        }
+                    }
+                    catch
+                    {
+                        if (ConfigControl.Name == AutoRecRingCount.Name)
+                        {
+                            ConfigControl.Value = 0;
+                        }
+                    }
+                    //初始化提示文本
+                    if (ConfigControl.Name == AutoRecRingCount.Name)
+                    {
+                        AutoRecRingCountShow.Content =Math.Floor( AutoRecRingCount.Value);
+                    }
+                }
+                if (ConfigObj.GetType() == typeof(ComboBox))
+                {
+                    ComboBox ConfigControl = ConfigObj as ComboBox;
+                    if (!string.IsNullOrEmpty(ConfigControl.Name))
+                    {
+                        string sv = SetConfig.GetConfig(ConfigControl.Name,"");
+                        if (!string.IsNullOrWhiteSpace(sv))
+                        {
+                            ConfigControl.SelectedIndex = int.Parse(sv);
+                        }
+                    }
+                }
+                if (ConfigObj.GetType() == typeof(CheckBox))
+                {
+                    CheckBox ConfigControl = ConfigObj as CheckBox;
+                    if (!string.IsNullOrEmpty(ConfigControl.Name))
+                    {
+                        string sv = SetConfig.GetConfig(ConfigControl.Name, "");
+                        if (!string.IsNullOrEmpty(sv))
+                        {
+                            Boolean svb = Boolean.Parse(sv);
+                            ConfigControl.IsChecked = svb;
+                        }
+                    }
+                }
+                if (ConfigObj.GetType() == typeof(RadioButton))
+                {
+                    RadioButton ConfigControl = ConfigObj as RadioButton;
+                    if (!string.IsNullOrEmpty(ConfigControl.Name))
+                    {
+                        string sv = SetConfig.GetConfig(ConfigControl.Name, "");
+                        if (!string.IsNullOrEmpty(sv))
+                        {
+                            Boolean svb = Boolean.Parse(sv);
+                            ConfigControl.IsChecked = svb;
+                        }
+                    }
+                }
+                if (ConfigObj.GetType() == typeof(PasswordBox))
+                {
+                    PasswordBox ConfigControl = ConfigObj as PasswordBox;
+                    if (!string.IsNullOrEmpty(ConfigControl.Name))
+                    {
+                        ConfigControl.Password = SetConfig.GetConfig(ConfigControl.Name, "");
+                    }
+                }
+            }
+        }
 
         //WIndows窗口消息钩子
         protected override void OnSourceInitialized(EventArgs e)
@@ -300,7 +384,7 @@ namespace 来电提醒服务端
                                     if (Device.GetCallerID(nChannel, szCallerID) < 1 || Device.GetRingCount(nChannel) < 1)
                                     {
                                         //PhoneStateList[nChannel].CallerID = "";
-                                        PhoneStateList[nChannel].PhoneNumber = "";
+                                        //PhoneStateList[nChannel].PhoneNumber = "";
                                     }
                                     //PhoneStateList[nChannel].DialedNum = "";
                                     PhoneStateList[nChannel].TalkTime = "";
@@ -325,7 +409,7 @@ namespace 来电提醒服务端
                                     if (Device.GetCallerID(nChannel, szCallerID) < 1 || Device.GetRingCount(nChannel) < 1)
                                     {
                                         //PhoneStateList[nChannel].CallerID = "";
-                                        PhoneStateList[nChannel].PhoneNumber = "";
+                                        //PhoneStateList[nChannel].PhoneNumber = "";
                                     };
                                     //PhoneStateList[nChannel].DialedNum = "";
                                     PhoneStateList[nChannel].TalkTime = "";
@@ -356,26 +440,17 @@ namespace 来电提醒服务端
                                     if (iRing == 1)
                                     {
                                         PhoneStateList[nChannel].timeS = DateTime.Now;
-                                        PhoneStateList[nChannel].timeS_UTC = DateTime.UtcNow.Ticks;
+                                        System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+                                        PhoneStateList[nChannel].timeS_UTC = (long)(DateTime.Now - startTime).TotalMilliseconds;
                                     }
                                     string szRing = "响铃:" + string.Format("{0:D2}", iRing);
                                     PhoneStateList[nChannel].LineState = szRing;
                                     PhoneStateList[nChannel].TalkTime = "";
                                     //PhoneStateList[nChannel].DialedNum = "";
                                     PhoneStateList[nChannel].CallType = Device.CallType_In;
-                                    int AutoRecRingCount = 0;
-                                    try
-                                    {
-                                        string AutoRecRingCountStr = SetConfig.GetConfig("AutoRecRingCount");
-                                        if (!string.IsNullOrWhiteSpace(AutoRecRingCountStr))
-                                        {
-                                            AutoRecRingCount = int.Parse(AutoRecRingCountStr);
-                                        }
-                                    }
-                                    catch
-                                    {
-                                        AutoRecRingCount = 0;
-                                    }
+
+                                    int AutoRecRingCount = SetConfig.GetConfig("AutoRecRingCount",0);
+                                    
                                     if (iRing == AutoRecRingCount)
                                     {
                                         if (Device.PickupPhone(nChannel) == 1)
@@ -450,7 +525,6 @@ namespace 来电提醒服务端
                         get.Running();
 
                         //Panuon.UI.Silver.NoticeX.Show("电话号码" + pn + "", PhoneStateList[nChannel].ChannelName+"有来电",1000*5);
-
 
                         Debug.WriteLine(nChannel.ToString() + " " + "MCU_BACKCID" + " ");
                         break;
@@ -530,7 +604,7 @@ namespace 来电提醒服务端
                     {
                         
                         //PhoneStateList[nChannel].MissedCall = "漏接电话 "+PhoneStateList[nChannel].CallerID;
-                        PhoneStateList[nChannel].MissedCall = "漏接电话： " + PhoneStateList[nChannel].PhoneNumber;
+                        PhoneStateList[nChannel].MissedCall = "漏接:" + PhoneStateList[nChannel].PhoneNumber+"|";
                         BGWork.CallNotice CN = new BGWork.CallNotice(nChannel, PhoneStateList[nChannel].PhoneNumber, true);
                         CN.Running();
                         //NoticeX.Show("漏接电话\n电话号码:" + PhoneStateList[nChannel].PhoneNumber + "", "漏接电话",1000*60);
@@ -566,6 +640,11 @@ namespace 来电提醒服务端
                             if (Device.StopPlayFile(nChannel, Device.LINE_PLAY) != 0)
                             {
                                 PhoneStateList[nChannel].bLinePlay = false;
+
+                                if (PhoneStateList[nChannel].CallType == Device.CallType_In&&!PhoneStateList[nChannel].bAutodial)
+                                {
+                                    Device.HangupPhone(nChannel);
+                                }
                                 /*
                                 if (Device.SetLine(nChannel, Device.CHANNEL_LINEFREE) != 0)
                                 {
@@ -621,47 +700,191 @@ namespace 来电提醒服务端
         //保存系统设置参数
         private void ConfigValueChange(object sender, EventArgs e)
         {
-            if (sender.GetType() == typeof(System.Windows.Controls.TextBox))
+            string SenderName = "";
+            string SenderValue = "";
+            if (sender.GetType() == typeof(TextBox))
             {
-                TextBox sctb = sender as TextBox;
-                if (sctb.Text != SetConfig.GetConfig(sctb.Name))
-                {
-                    string SV = SetConfig.SaveConfig(sctb.Name, sctb.Text);
-                    if (sctb.Text != SV)
-                    {
-                        NoticeX.Show("参数名：" + sctb.Name + "\n应存值：" + sctb.Text + "\n实存值：" + SV, "保存系统参数异常", MessageBoxIcon.Question, 1000 * 10);
-                        Debug.WriteLine(sctb.Name + " Change Fai");
-                    }
-                }
+                TextBox SenderObject = sender as TextBox;
+                SenderName = SenderObject.Name;
+                SenderValue = SenderObject.Text;
             }
             if (sender.GetType() == typeof(Slider))
             {
-                Slider scs = sender as Slider;
-                int v = int.Parse(Math.Floor(scs.Value).ToString());
-                if (v.ToString() != SetConfig.GetConfig(scs.Name))
+                Slider SenderObject = sender as Slider;
+                SenderName = SenderObject.Name;
+                if (SenderObject.IsSnapToTickEnabled)
                 {
-                    AutoRecRingCountShow.Content = v.ToString();
-                    string SV = SetConfig.SaveConfig(scs.Name, v.ToString());
-                    if (v.ToString() != SV)
-                    {
-                        NoticeX.Show("参数名：" + scs.Name + "\n应存值：" + v.ToString() + "\n实存值：" + SV, "保存系统参数异常", MessageBoxIcon.Question, 1000 * 10);
-                        Debug.WriteLine(scs.Name + " Change Fai");
-                    }
+                    SenderValue = Math.Floor(SenderObject.Value).ToString();
+                    SenderObject.Value = int.Parse(SenderValue);
+                }
+                else
+                {
+                    SenderValue = SenderObject.Value.ToString();
                 }
             }
             if (sender.GetType() == typeof(ComboBox))
             {
-                ComboBox sccb = sender as ComboBox;
-                if (sccb.SelectedIndex.ToString() != SetConfig.GetConfig(sccb.Name))
+                ComboBox SenderObject = sender as ComboBox;
+                SenderName = SenderObject.Name;
+                SenderValue = SenderObject.SelectedIndex.ToString();
+            }
+            if (sender.GetType() == typeof(CheckBox))
+            {
+                CheckBox SenderObject = sender as CheckBox;
+                SenderName = SenderObject.Name;
+                SenderValue = SenderObject.IsChecked.ToString();
+            }
+            if (sender.GetType() == typeof(RadioButton))
+            {
+                RadioButton SenderObject = sender as RadioButton;
+                SenderName = SenderObject.Name;
+                SenderValue = SenderObject.IsChecked.ToString();
+            }
+            if (sender.GetType() == typeof(PasswordBox))
+            {
+                PasswordBox SenderObject = sender as PasswordBox;
+                SenderName = SenderObject.Name;
+                SenderValue = SenderObject.Password.ToString();
+            }
+            if (!string.IsNullOrEmpty(SenderName))
+            {
+                if (SenderValue != SetConfig.GetConfig(SenderName,""))
                 {
-                    string SV = SetConfig.SaveConfig(sccb.Name, sccb.SelectedIndex.ToString());
-                    if (sccb.SelectedIndex.ToString() != SV)
+                    string ConfigValue = SetConfig.SaveConfig(SenderName, SenderValue);
+                    if (SenderValue != ConfigValue)
                     {
-                        NoticeX.Show("参数名：" + sccb.Name + "\n应存值：" + sccb.SelectedIndex.ToString() + "\n实存值：" + SV, "保存系统参数异常", MessageBoxIcon.Question, 1000 * 10);
-                        Debug.WriteLine(sccb.Name + " Change Fai");
+                        NoticeX.Show("参数名：" + SenderName + "\n应存值：" + SenderValue + "\n实存值：" + ConfigValue, "保存参数异常", MessageBoxIcon.Question,SetConfig.GetConfig(NoticeConf_ErrorShowT.Name,10) * 1000);
+                        Debug.WriteLine("保存参数异常:  参数名：" + SenderName + "|应存值：" + SenderValue + "|实存值：" + ConfigValue);
+                    }
+                    else
+                    {
+                        
                     }
                 }
             }
+            if (SenderName == AutoRecRingCount.Name)
+            {
+                AutoRecRingCountShow.Content = Math.Floor(AutoRecRingCount.Value).ToString();
+            }
+        }
+
+        //前端交互控制
+        private void UIControl(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+                //致远参数面板
+
+                if (RecFileUploadType.SelectedIndex == 0)
+                {
+                    SeeyonConfigPage.Visibility = Visibility.Visible;
+                }
+                else if ((Boolean)NoticeCong_RingSend_SeeyonOAForm.IsChecked || (Boolean)NoticeCong_RingSend_SeeyonOAMsg.IsChecked)
+                {
+                    SeeyonConfigPage.Visibility = Visibility.Visible;
+                }
+                else if ((Boolean)NoticeCong_MissSend_SeeyonOAForm.IsChecked || (Boolean)NoticeCong_MissSend_SeeyonOAMsg.IsChecked)
+                {
+                    SeeyonConfigPage.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    SeeyonConfigPage.Visibility = Visibility.Collapsed;
+                }
+                //QQ参数面板
+                if ((Boolean)NoticeCong_RingSend_QQMsg.IsChecked || (Boolean)NoticeCong_RingSend_QQWin.IsChecked)
+                {
+                    QQConfigPage.Visibility = Visibility.Visible;
+                }
+                else if ((Boolean)NoticeCong_MissSend_QQMsg.IsChecked || (Boolean)NoticeCong_MissSend_QQWin.IsChecked)
+                {
+                    QQConfigPage.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    QQConfigPage.Visibility = Visibility.Collapsed;
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
+        private void TestWork_Click(object sender, RoutedEventArgs e)
+        {
+            ThreadSys.SeeyonOA.Basic OAB = new ThreadSys.SeeyonOA.Basic();
+            var txtFiles = Directory.EnumerateFiles("E:\\", "*.wav");
+
+            foreach (string currentFile in txtFiles)
+            {
+               var regkey = Microsoft.Win32.Registry.ClassesRoot;
+               var extn = System.IO.Path.GetExtension(currentFile);
+              //look for extension
+              var fileextkey = regkey.OpenSubKey(extn);
+
+             //retrieve Content Type value
+               var filecontenttype = fileextkey.GetValue("Content Type", "application/unknown").ToString();
+
+                //System.Web.MimeMapping.GetMimeMapping(fileName)
+                //GetMimeMapping(path)
+                Debug.WriteLine(currentFile+"|"+extn + "|" + filecontenttype);
+                //string fileName = currentFile.Substring(sourceDirectory.Length + 1);
+                //Directory.Move(currentFile, Path.Combine(archiveDirectory, fileName));
+            }
+
+            //System.IO.Directory directory = new System.IO.Directory("E:\\");
+            //long u = OAB.UploadFile(@"E:\PhoneCall_02_20200701_194358_Record.wav");
+            //Task<string> u = OAB.UploadFile(@"E:\PhoneCall_02_20200701_194358_Record.wav");
+            
+        }
+
+        //备份恢复页面动作
+        private void BackupConfPageLoaded(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser;
+            Microsoft.Win32.RegistryKey software = key.CreateSubKey("software\\" + SetConfig.ServiceName);
+            software = key.OpenSubKey("software\\" + SetConfig.ServiceName, true);
+
+            JObject SysConfigJson = new JObject();
+            foreach (string ParamName in software.GetValueNames())
+            {
+                SysConfigJson.Add(ParamName, software.GetValue(ParamName).ToString());
+            }
+            Clipboard.SetText(SysConfigJson.ToString());
+
+            BackupConfigShow.Paste();
+        }
+
+        private void ResetSYSConfigDO(object sender, RoutedEventArgs e)
+        {
+            TextRange ConfigText = new TextRange(BackupConfigShow.Document.ContentStart, BackupConfigShow.Document.ContentEnd);
+            JObject SysConfigJson = JsonConvert.DeserializeObject<JObject>(ConfigText.Text);
+
+            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser;
+            Microsoft.Win32.RegistryKey software = key.CreateSubKey("software\\" + SetConfig.ServiceName);
+            software = key.OpenSubKey("software\\" + SetConfig.ServiceName, true);
+
+            foreach (var param in SysConfigJson)
+            {
+                if (param.Value.ToString() != SetConfig.GetConfig(param.Key, ""))
+                {
+                    software.SetValue(param.Key, param.Value);
+                }
+            }
+            MessageBox.Show("恢复设置完成，请重新启动程序", "恢复设置");
+            Application.Current.Shutdown();
+        }
+
+        private void OpenBackupPage(object sender, RoutedEventArgs e)
+        {
+            BackupConfigPage.Visibility = Visibility.Visible;
+            BackupConfigPage.IsSelected = true;
+            BackupConfigPage.Visibility = Visibility.Collapsed;
         }
     }
 }

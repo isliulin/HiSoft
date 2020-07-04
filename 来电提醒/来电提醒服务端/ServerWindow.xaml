@@ -9,18 +9,24 @@
         Title="Server" Height="450" Width="1020" Loaded="MainWindowLoaded" Icon="Res/FileIcon.png" WindowStartupLocation="CenterScreen" Closing="CloseDo">
     <Grid>
 
-        <TabControl pu:TabControlHelper.TabControlStyle="Card">
+        <TabControl pu:TabControlHelper.TabControlStyle="Card" SelectionChanged="UIControl"  Margin="1">
             <TabItem Header="监视器">
-                <StackPanel Orientation="Vertical" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <!--
-                        <CheckBox x:Name="LinkState" VerticalAlignment="Center" IsEnabled="False"/>
-                        <CheckBox x:Name="ShowMoreInfo" Content="显示设备附加信息" VerticalAlignment="Center" />
-                        -->
-                        <Label x:Name="DiaMsg"/>
-                    </StackPanel>
-
-                    <ListView x:Name="PhoneStateListView" ItemsSource="{Binding }">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45*" MinHeight="170" MaxHeight="200"/>
+                        <RowDefinition Height="5*" MinHeight="10" MaxHeight="20"/>
+                        <RowDefinition Height="20*" MinHeight="100" MaxHeight="300"/>
+                        <RowDefinition Height="25*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    
+                    <ListView Grid.Row="0" Grid.Column="0" x:Name="PhoneStateListView" ItemsSource="{Binding }" Grid.ColumnSpan="4">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="通道" Width="0" DisplayMemberBinding="{Binding Channel}" />
@@ -38,7 +44,7 @@
                                 <GridViewColumn Header="号码" Width="120" DisplayMemberBinding="{Binding PhoneNumber}"/>
                                 <GridViewColumn Header="往来单位/联系人" Width="180" DisplayMemberBinding="{Binding ComName}"/>
                                 <GridViewColumn Header="漏接" Width="120" DisplayMemberBinding="{Binding MissedCall}"/>
-                                
+
                                 <GridViewColumn Header="通话时间" Width="60" DisplayMemberBinding="{Binding TalkTime}"/>
                                 <GridViewColumn Header="开始时间" Width="120" DisplayMemberBinding="{Binding timeS}"/>
                                 <GridViewColumn Header="截至时间" Width="120" DisplayMemberBinding="{Binding timeE}"/>
@@ -49,26 +55,16 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="25*"/>
-                            <ColumnDefinition Width="25*"/>
-                            <ColumnDefinition Width="25*"/>
-                            <ColumnDefinition Width="25*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="100*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" x:Name="mMsg0" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="mMsg1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                        <TextBlock Grid.Row="0" Grid.Column="2" x:Name="mMsg2" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                        <TextBlock Grid.Row="0" Grid.Column="3" x:Name="mMsg3" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                    </Grid>
-                    <RichTextBox x:Name="sMsg" VerticalScrollBarVisibility="Auto"/>
-                </StackPanel>
+                    <Label Grid.Row="1" Grid.Column="0" x:Name="DiaMsg" Grid.ColumnSpan="4"/>
+                    <RichTextBox Grid.Row="2" Grid.Column="0" x:Name="sMsg" VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="4"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" x:Name="mMsg0" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="mMsg1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    <TextBlock Grid.Row="3" Grid.Column="2" x:Name="mMsg2" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    <TextBlock Grid.Row="3" Grid.Column="3" x:Name="mMsg3" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                </Grid>
             </TabItem>
-            <TabItem Header="参数设置">
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ConfGrid">
+            <TabItem Header="系统设置">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ConfGrid" Loaded="ConfigWindowLoaded" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="20*"/>
@@ -97,37 +93,243 @@
                     <Label Grid.Row="2" Grid.Column="1" Content="响铃触发答录机"  HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                         <Label  Content="响铃"/>
-                        <Label  Content="8" x:Name="AutoRecRingCountShow"/>
+                        <Label  Content="n" x:Name="AutoRecRingCountShow"/>
                         <Label  Content="秒后自动接听,为0时不触发。"/>
                     </StackPanel>
 
-                    <Slider Grid.Row="2" Grid.Column="2" SmallChange="1" x:Name="AutoRecRingCount" Value="0" TickPlacement="Both"  HorizontalAlignment="Stretch" VerticalAlignment="Center" ValueChanged="ConfigValueChange" AutoToolTipPlacement="BottomRight" />
+                    <Slider Grid.Row="2" Grid.Column="2" SmallChange="1" x:Name="AutoRecRingCount" Value="0" TickPlacement="Both"  HorizontalAlignment="Stretch" VerticalAlignment="Center" ValueChanged="ConfigValueChange" AutoToolTipPlacement="BottomRight" IsSnapToTickEnabled="True" />
                     <Label Grid.Row="2" Grid.Column="3" Content="答录机录音时长(秒)"  HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <TextBox Grid.Row="2" Grid.Column="4" x:Name="AutoRecMaxSecond" pu:TextBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center"  TextChanged="ConfigValueChange"/>
                     <Label Grid.Row="3" Grid.Column="1" Content="录音文件存储位置"  HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <TextBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="3" x:Name="RecFilePath" IsEnabled="False" Text="\RecFiles\" pu:TextBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center"  TextChanged="ConfigValueChange" />
                     <Button Grid.Row="3" Grid.Column="4" Content="……" Width="50" Height="30"  HorizontalAlignment="Right" VerticalAlignment="Center" pu:ButtonHelper.ClickStyle="Sink" pu:ButtonHelper.ButtonStyle="Link"/>
-                    <Label Grid.Row="4" Grid.Column="1" Content="来电提醒方式"  HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <ComboBox Grid.Row="4" Grid.Column="2" x:Name="NoticeType" pu:ComboBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="ConfigValueChange"  >
-                        <ComboBoxItem Content="程序弹窗"/>
-                        <ComboBoxItem Content="企业QQ消息"/>
-                        <ComboBoxItem Content="致远OA消息"/>
-                        <ComboBoxItem Content="外部程序"/>
-                        <ComboBoxItem Content="不提醒"/>
+
+                    <Label Grid.Row="4" Grid.Column="1" Content="录音文件上传"  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="4" Grid.Column="2" x:Name="RecFileUploadType" pu:ComboBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="ConfigValueChange">
+                        <ComboBoxItem Content="到致远OA" x:Name="RecFileUploadType_0" />
+                        <ComboBoxItem Content="不上传" x:Name="RecFileUploadType_9"  />
                     </ComboBox>
-                    <Label Grid.Row="4" Grid.Column="3" Content="录音文件上传"  HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <ComboBox Grid.Row="4" Grid.Column="4" x:Name="RecFileUploadType" pu:ComboBoxHelper.CornerRadius="8"  HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="ConfigValueChange" >
-                        <ComboBoxItem Content="到致远OA"/>
-                        <ComboBoxItem Content="不上传"/>
-                    </ComboBox>
+                    <CheckBox Grid.Row="4" Grid.Column="3" x:Name="DeleteFileAfterUpload" Content="上传后删除原始文件" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange" IsChecked="False" IsEnabled="False"/>
+                    <Button Grid.Row="4" Grid.Column="4" Content="备份/恢复设置" Margin="10" Click="OpenBackupPage"/>
                     <Label Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" x:Name="ConfMsg" VerticalAlignment="Top" HorizontalAlignment="Left"/>
                     <!--
                     <pu:DateTimePicker />
                     -->
                 </Grid>
             </TabItem>
-        </TabControl>
-        
+            <TabItem Header="查询设置" >
+                <Grid Loaded="ConfigWindowLoaded">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="10*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
 
+                    <Label Grid.Column="1" Grid.Row="1" Content="查询方式" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Column="2" Grid.Row="1" x:Name="ContactSearchConf_Type" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="ConfigValueChange" >
+                        <ComboBoxItem Content="MS SQL Serever"/>
+                        <ComboBoxItem Content="MySQL"/>
+                        <ComboBoxItem Content="SQLite"/>
+                        <ComboBoxItem Content="Python"/>
+                        <ComboBoxItem Content="Http Get"/>
+                    </ComboBox>
+
+                    <Label Grid.Column="1" Grid.Row="2" Content="数据库地址" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Label Grid.Column="3" Grid.Row="2" Content="数据库端口" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Label Grid.Column="1" Grid.Row="3" Content="数据库用户名" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Label Grid.Column="3" Grid.Row="3" Content="数据库密码"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Label Grid.Column="1" Grid.Row="4" Content="文件路径" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Label Grid.Column="1" Grid.Row="5" Content="查询脚本" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    
+                    <TextBox Grid.Column="2" Grid.Row="2" x:Name="ContactSearchConf_SQLUrl" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox Grid.Column="4" Grid.Row="2" x:Name="ContactSearchConf_SQLPort" Text="1433"  VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox Grid.Column="2" Grid.Row="3" x:Name="ContactSearchConf_SQLUser" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <PasswordBox Grid.Column="4" Grid.Row="3" x:Name="ContactSearchConf_SQLPwd" VerticalAlignment="Center" PasswordChanged="ConfigValueChange" />
+                    <TextBox Grid.Column="2" Grid.Row="4" x:Name="ContactSearchConf_FilePath" Grid.ColumnSpan="3" VerticalAlignment="Stretch" TextChanged="ConfigValueChange"/>
+                    <Button Grid.Column="4" Grid.Row="4" Content="……" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="2" Grid.Row="5" x:Name="ContactSearchConf_ScryptPath" Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Stretch" TextChanged="ConfigValueChange"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="提示参数" x:Name="NoteConfigPage">
+                <UniformGrid Columns="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Loaded="ConfigWindowLoaded">
+                    <Label Content="响铃动作:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <RadioButton Content="致远OA表单提醒" x:Name="NoticeCong_RingSend_SeeyonOAForm" GroupName="响铃SeeyonOA提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange"  Click="UIControl"/>
+                    <RadioButton Content="致远OA消息提醒" x:Name="NoticeCong_RingSend_SeeyonOAMsg"  GroupName="响铃SeeyonOA提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange"   Click="UIControl"/>
+                    <RadioButton Content="停用" x:Name="NoticeCong_RingSend_SeeyonOANull"  GroupName="响铃SeeyonOA提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange"   Click="UIControl"/>
+                    <RadioButton Content="企业QQ消息提醒" x:Name="NoticeCong_RingSend_QQMsg" GroupName="响铃企业QQ提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange"  Click="UIControl"/>
+                    <RadioButton Content="企业QQ弹窗提醒" x:Name="NoticeCong_RingSend_QQWin" GroupName="响铃企业QQ提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange" Click="UIControl"/>
+                    <RadioButton Content="停用" x:Name="NoticeCong_RingSend_QQNull" GroupName="响铃企业QQ提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange" Click="UIControl"/>
+                    <Label/>
+                    
+                    <Label Content="漏接动作:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <RadioButton Content="致远OA表单提醒" x:Name="NoticeCong_MissSend_SeeyonOAForm" GroupName="漏接SeeyonOA提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange"  Click="UIControl"/>
+                    <RadioButton Content="致远OA消息提醒" x:Name="NoticeCong_MissSend_SeeyonOAMsg"  GroupName="漏接SeeyonOA提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange" Click="UIControl"/>
+                    <RadioButton Content="停用" x:Name="NoticeCong_MissSend_SeeyonOANull"  GroupName="漏接SeeyonOA提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange" Click="UIControl"/>
+                    <RadioButton Content="企业QQ消息提醒" x:Name="NoticeCong_MissSend_QQMsg" GroupName="漏接企业QQ提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange" Click="UIControl"/>
+                    <RadioButton Content="企业QQ弹窗提醒" x:Name="NoticeCong_MissSend_QQWin" GroupName="漏接企业QQ提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange" Click="UIControl"/>
+                    <RadioButton Content="停用" x:Name="NoticeCong_MissSend_QQNull" GroupName="漏接企业QQ提醒" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange" Click="UIControl"/>
+                    <Label/>
+                    
+                    <Label Content="系统通知显示时间" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                    
+                    <Label Content="来电时间" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox x:Name="NoticeConf_CallInShowT" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label Content="漏接时间" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBox x:Name="NoticeConf_MissCallShowT" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label Content="录音完成时间" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox x:Name="NoticeConf_RecOverShowT" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label/>
+
+
+
+                    <Label Content="(单位:秒)" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <Label Content="异常提示时间" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="NoticeConf_WarrningShowT" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label Content="错误提示时间" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox x:Name="NoticeConf_ErrorShowT" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    
+                    <Label Content="时间为0则闪现" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Label  Content="为99则始终显示" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label/>
+                    
+                </UniformGrid>
+            </TabItem>
+            <TabItem Header="致远参数" x:Name="SeeyonConfigPage" Visibility="Collapsed" >
+                <UniformGrid Columns="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="ConfigWindowLoaded" >
+                    
+                    <Label Content="服务器地址端口" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="SeeyonConf_URL" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label Content="协同企业ID" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="SeeyonConf_ComID"  VerticalAlignment="Center"  TextChanged="ConfigValueChange"/>
+                    <Label Content="协同用户名" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="SeeyonConf_User"   VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    
+                    <Label Content="Rest用户名" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_RestUser"  VerticalAlignment="Center"  TextChanged="ConfigValueChange"/>
+                    <Label Content="Rest密码" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <PasswordBox x:Name="SeeyonConf_RestPwd"  VerticalAlignment="Center"  PasswordChanged="ConfigValueChange"/>
+                    <Label Content="协同用户代码" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="SeeyonConf_UserCode" VerticalAlignment="Center"  TextChanged="ConfigValueChange"/>
+
+
+                    <Label Content="(当前仅支持流程表单)" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                    <Label Content="通话录音" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Label Content="来电响铃" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Label Content="未接来电" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+
+                    <Label Content="表单模板代码" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__FormCode" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Ring_FormCode" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Miss_FormCode" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+
+                    <Label Content="模板直接提交" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <CheckBox Content="录音表单直接提交" x:Name="SeeyonConf_Rec__FormSubmit"  HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange"/>
+                    <CheckBox Content="来电表单直接提交" x:Name="SeeyonConf_Ring_FormSubmit"  HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange"/>
+                    <CheckBox Content="漏电表单直接提交" x:Name="SeeyonConf_Miss_FormSubmit"  HorizontalAlignment="Center" VerticalAlignment="Center" Checked="ConfigValueChange" Unchecked="ConfigValueChange"/>
+
+                    <Label Content="电话号码字段名 str" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__PhoneNoTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Ring_PhoneNoTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Miss_PhoneNoTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+
+                    <Label Content="通话线路字段名 str" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__LineTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Ring_LineTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Miss_LineTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+
+                    <Label Content="通话类型字段名 str" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__CallTypeTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Ring_CallTypeTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Miss_CallTypeTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+
+                    <Label Content="开始时间字段名 datetime" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__TimeSTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Ring_TimeSTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Miss_TimeSTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+
+                    <Label Content="结束时间字段名 datetime" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__TimeETitle" VerticalAlignment="Center"  TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Ring_TimeETitle" VerticalAlignment="Center"  TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Miss_TimeETitle" VerticalAlignment="Center"  TextChanged="ConfigValueChange"/>
+
+                    <Label Content="通话时长字段名 str" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__TalkTimeTitle"  VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label/>
+                    <Label/>
+
+                    <Label Content="备注信息字段名 str" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__MemoTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Ring_MemoTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <TextBox x:Name="SeeyonConf_Miss_MemoTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+
+                    <Label Content="漏接电话字段名 checkbox" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__MissStateTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label/>
+                    <TextBox x:Name="SeeyonConf_Miss_MissStateTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+
+                    <Label Content="附件状态字段名 checkbox" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__FileStateTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label/>
+                    <Label/>
+
+                    <Label Content="附件存储字段名 files" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_RecFileTitle"  VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                </UniformGrid>
+            </TabItem>
+            <TabItem Header="QQ参数" x:Name="QQConfigPage" Visibility="Collapsed"  >
+                <UniformGrid Columns="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="ConfigWindowLoaded" >
+                    <Label/>
+                    <Label Content="企业ID" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox x:Name="QQConf_ComID" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label Content="程序ID" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="QQConf_AppID" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label/>
+                    <Label/>
+                    <Label Content="程序密钥" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <PasswordBox x:Name="QQConf_AppSec" VerticalAlignment="Center" PasswordChanged="ConfigValueChange"/>
+                    <Label Content="消息接收人" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox x:Name="QQConf_Receiver" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label/>
+                    <Label/>
+                </UniformGrid>
+            </TabItem>
+            <TabItem Header="参数备份/恢复" x:Name="BackupConfigPage" Loaded="BackupConfPageLoaded" Visibility="Collapsed"  >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10*" MinHeight="50" MaxHeight="100"/>
+                        <RowDefinition Height="90*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5">
+                        <Button Content="输出到文件"  HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        <Button Content="引入备份文件"  HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        <Button Content="恢复" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="5" Click="ResetSYSConfigDO"/>
+                    </StackPanel>
+                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Content="已复制设置参数到剪切板，可直接粘贴。" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <RichTextBox Grid.Row="1" Grid.Column="1" Margin="20" x:Name="BackupConfigShow"    pu:ScrollViewerHelper.HandleMouseWheel="True"  VerticalScrollBarVisibility="Auto" AutomationProperties.IsOffscreenBehavior="Onscreen" HorizontalScrollBarVisibility="Auto" MinWidth="100" MinHeight="100" MaxHeight="9999" Grid.IsSharedSizeScope="True"/>
+                </Grid>
+                
+            </TabItem>
+            <TabItem Header="关于" x:Name="AboutPage">
+                <Button x:Name="TestWork" Content="功能测试" Click="TestWork_Click"/>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

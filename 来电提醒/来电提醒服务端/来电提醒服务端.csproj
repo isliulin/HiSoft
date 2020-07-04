@@ -7,13 +7,21 @@
     <Platforms>AnyCPU;x86;x64</Platforms>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>HiSoftYang.pfx</AssemblyOriginatorKeyFile>
-    <ApplicationIcon>Res\Apps_file.ico</ApplicationIcon>
+    <ApplicationIcon>Res\AnderLogo.ico</ApplicationIcon>
     <!--
     <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     -->
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <StartupObject>来电提醒服务端.App</StartupObject>
+    <Version>0.5.7</Version>
+    <Authors>杨学业</Authors>
+    <Company>海城市海汇软件销售有限公司</Company>
+    <Product>固定电话来电监控程序</Product>
+    <Copyright>杨</Copyright>
+    <PackageProjectUrl>www.hi-soft.cn</PackageProjectUrl>
+    <PackageIcon>Hi logo For U8 350_80.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -36,6 +44,10 @@
 
   <ItemGroup>
     <None Remove="FileIcon.png" />
+    <None Include="..\..\..\..\..\..\AnderDoc\Desktop\Logos Ico\Hi logo For U8 350_80.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -52,6 +64,7 @@
 
   <ItemGroup>
     <Folder Include="SQLDB\" />
+    <Folder Include="ThreadSys\" />
   </ItemGroup>
 
   <ItemGroup>

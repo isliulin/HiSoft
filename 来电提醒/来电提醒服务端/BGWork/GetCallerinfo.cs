@@ -32,24 +32,11 @@ namespace 来电提醒服务端.BGWork
 
         void WorkComplete(object sender, RunWorkerCompletedEventArgs e)
         {
-            CallNotice CN = new CallNotice(Channel, PhoneNo);
-            CN.Running();
-            /*
-            string NoteMsg = "来电号码：" + ServerWindow.PhoneStateList[Channel].PhoneNumber;
-            NoteMsg += "\n单位信息：" + ServerWindow.PhoneStateList[Channel].ComName;
-            NoteMsg += "\n来电时间：" + ServerWindow.PhoneStateList[Channel].timeS.ToString();
-            switch (SetConfig.GetConfig("NoticeType"))
+            if (ServerWindow.PhoneStateList[Channel].CallType != Device.CallType_Out)
             {
-                case "0":
-                    //程序弹窗
-                    NoticeX.Show(NoteMsg, ServerWindow.PhoneStateList[Channel].ChannelName + "来电", 1000 * 5);
-                    break;
-                default:
-                    //默认使用程序系统通知
-                    NoticeX.Show(NoteMsg, ServerWindow.PhoneStateList[Channel].ChannelName + "来电", 1000 * 5);
-                    break;
+                CallNotice CN = new CallNotice(Channel, PhoneNo);
+                CN.Running();
             }
-            */
         }
 
         void WorkFunction(object sender, DoWorkEventArgs e)

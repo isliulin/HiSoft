@@ -98,19 +98,7 @@ namespace 来电提醒服务端
         {
             string FirstNoteVoice = "通话录音前缀.wav";
             
-            int AutoRecMaxSecond = 60 * 2;
-            try
-            {
-                string AutoRecMaxSecondStr = SetConfig.GetConfig("AutoRecMaxSecond");
-                if (!string.IsNullOrWhiteSpace(AutoRecMaxSecondStr))
-                {
-                    AutoRecMaxSecond = int.Parse(AutoRecMaxSecondStr);
-                }
-            }
-            catch
-            {
-                AutoRecMaxSecond = 60 * 2;
-            }
+            int AutoRecMaxSecond = SetConfig.GetConfig("AutoRecMaxSecond",60*2);
             
             CallInfo CI = this;
 
@@ -143,6 +131,10 @@ namespace 来电提醒服务端
                 */
                 if (Device.EnablePlayFile(Channel, Device.LINE_PLAY, 1) != 0)
                 {
+                    if (CallType == Device.CallType_In)
+                    {
+                        Device.PickupPhone(Channel);
+                    }
                     if (Device.StartPlayFile(Channel, Device.LINE_PLAY, FirstNoteVoice.ToCharArray()) != 0)
                     {
                         bLinePlay = true;
@@ -174,7 +166,7 @@ namespace 来电提醒服务端
                 Thread.Sleep(100);
             }
             //设置录音文件缓存路径及文件名
-            RecFileName = "E:\\PhoneCall_" + string.Format("{0:D2}", Channel + 1) + "_"+DateTime.Now.ToString("yyyyMMdd_HHmmss")+"_Record.wav";
+            RecFileName = "E:\\"+CallType+"_" + string.Format("{0:D2}", Channel + 1) + "_" + PhoneNumber +  "_"+DateTime.Now.ToString("yyyyMMdd_HHmmss")+"_Record.wav";
             //发送录音请求
             RecErrCode = Device.StartRecordFile(Channel, RecFileName.ToCharArray());
             CI = this;
