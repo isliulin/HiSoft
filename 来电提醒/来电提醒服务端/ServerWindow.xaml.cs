@@ -71,7 +71,7 @@ namespace 来电提醒服务端
             {
                 Phone nPhone = new Phone(i);
                 nPhone.SavePhoneRecord.ProgressChanged += PhoneRecoreingStepRep;
-                string pn = SetConfig.GetConfig("LanName" + (i + 1).ToString(),"线路"+(i+1).ToString());
+                string pn = SetConfig.GetConfig("LanName" + (i + 1).ToString(),"Line"+(i+1).ToString());
                 if (!string.IsNullOrWhiteSpace(pn))
                 {
                     nPhone.ChannelName = pn;
@@ -669,8 +669,61 @@ namespace 来电提醒服务端
                     PhoneStateList[nChannel].SavePhoneRecord.RunWorkerAsync();
                 }
             }
-
             PhoneStateListView.Items.Refresh();
+
+            //运行日志
+            {
+                FileStream logFS = null;
+                string LogPath = string.Format("Logs\\Log_{0}.txt", DateTime.Now.ToString("yyyy-MM-dd"));
+                //生成日志内容
+                string Log = DateTime.Now.ToString("MM-dd HH:mm");
+                Log += "|" + "msg:"+ nChannel +","+  nMsg.ToString().PadLeft(4,' ');
+                Log += "|" + "Channel:" + PhoneStateList[nChannel].ChannelName.PadLeft(12, ' ');
+                Log += "|" + "CS:" + PhoneStateList[nChannel].LineState.PadLeft(20, ' ');
+                Log += "|" + "CT:" + PhoneStateList[nChannel].CallType.PadLeft(8, ' ');
+                Log += "|" + "No:" + PhoneStateList[nChannel].PhoneNumber.PadLeft(16, ' ');
+                Log += "|" + "Comp:" + PhoneStateList[nChannel].ComName.PadLeft(32, ' ');
+                Log += "|" + "Miss:" + PhoneStateList[nChannel].MissedCall.PadLeft(24, ' ');
+                Log += "|" + "TT:" + PhoneStateList[nChannel].TalkTime.PadLeft(8, ' ');
+                Log += "|" + "TS:" + PhoneStateList[nChannel].timeS.ToString("HH:mm:ss");
+                Log += "|" + "TE:" + PhoneStateList[nChannel].timeE.ToString("HH:mm:ss");
+                Log += "|" + "Rec:" + PhoneStateList[nChannel].RecFileName.PadRight(32, ' ');
+                
+
+                //写入日志文件
+                try
+                {
+                    if (!Directory.Exists("Logs"))
+                    {
+                        Directory.CreateDirectory("Logs");
+                    }
+
+                    if (!File.Exists(LogPath))
+                    {
+                        File.Create(LogPath).Dispose();
+                    }
+                    logFS = new FileStream(LogPath, FileMode.Append, FileAccess.Write);
+                    byte[] buttf = Encoding.Default.GetBytes(Log + "\r\n");
+                    logFS.Write(buttf);
+                }
+                catch
+                {
+                    Debug.WriteLine("写入失败");
+                    Log += "|" + LogPath+ "写入失败";
+                }
+                finally
+                {
+                    logFS.Close();
+                }
+
+                this.sMsg.AppendText("\n" + Log);
+                //前端显示最后50条记录
+                if (sMsg.Document.Blocks.Count > 50)
+                {
+                    this.sMsg.Document.Blocks.Remove(this.sMsg.Document.Blocks.FirstBlock);
+                }
+                sMsg.ScrollToEnd();
+            }
         }
 
 

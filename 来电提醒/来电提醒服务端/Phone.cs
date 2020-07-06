@@ -18,16 +18,16 @@ namespace 来电提醒服务端
         //通道名称
         public string ChannelName { get; set; } = "";
         //通话方向
-        public string CallType { get; set; }
+        public string CallType { get; set; } = "";
         //电话号码
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = "";
         //单位信息
-        public string ComName { get; set; }
+        public string ComName { get; set; } = "";
 
         //漏接电话
-        public string MissedCall { get; set; }
+        public string MissedCall { get; set; } = "";
         //通话时间
-        public string TalkTime { get; set; }
+        public string TalkTime { get; set; } = "";
         public DateTime timeS { get; set; }
         public DateTime timeE { get; set; }
 
@@ -35,7 +35,7 @@ namespace 来电提醒服务端
         public long timeE_UTC { get; set; }
 
         //录音信息
-        public string RecFileName;
+        public string RecFileName { get; set; } = "";
 
         public int RecErrCode;
         public override string ToString()
@@ -53,7 +53,7 @@ namespace 来电提醒服务端
         public string DeviceInfo { get; set; } = "";
 
         //线路状态
-        public string LineState { get; set; }
+        public string LineState { get; set; } = "";
 
         /*
         //呼入号码

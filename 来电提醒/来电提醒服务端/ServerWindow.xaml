@@ -282,10 +282,16 @@
                     <Label/>
                     <TextBox x:Name="SeeyonConf_Miss_MissStateTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
 
+                    <Label Content="录音文件名字段名 str" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SeeyonConf_Rec__FileNameTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
+                    <Label/>
+                    <Label/>
+
                     <Label Content="附件状态字段名 checkbox" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBox x:Name="SeeyonConf_Rec__FileStateTitle" VerticalAlignment="Center" TextChanged="ConfigValueChange"/>
                     <Label/>
                     <Label/>
+                    
 
                     <Label Content="附件存储字段名 files" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBox x:Name="SeeyonConf_RecFileTitle"  VerticalAlignment="Center" TextChanged="ConfigValueChange"/>

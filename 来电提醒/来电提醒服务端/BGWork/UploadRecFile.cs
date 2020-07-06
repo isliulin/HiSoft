@@ -106,6 +106,9 @@ namespace 来电提醒服务端.BGWork
                     string TalkTimeTitle = SetConfig.GetConfig("SeeyonConf_Rec__TimeETitle", "");
                     string MemoTitle = SetConfig.GetConfig("SeeyonConf_Rec__MemoTitle", "");
                     string MissStateTitle = SetConfig.GetConfig("SeeyonConf_Rec__TimeETitle", "");
+                    string FileNameTitle = SetConfig.GetConfig("SeeyonConf_Rec__FileNameTitle", "");
+
+                    
 
                     if (string.IsNullOrWhiteSpace(PhoneNoTitle))
                     {
@@ -134,6 +137,10 @@ namespace 来电提醒服务端.BGWork
                     if (!string.IsNullOrWhiteSpace(TalkTimeTitle))
                     {
                         OANoteDada.Add(TalkTimeTitle, nPhone.MissedCall + nPhone.TalkTime);
+                    }
+                    if (!string.IsNullOrWhiteSpace(FileNameTitle))
+                    {
+                        OANoteDada.Add(FileNameTitle, nPhone.RecFileName + "," + FilePath);
                     }
                     if (!string.IsNullOrWhiteSpace(MissStateTitle))
                     {
@@ -165,7 +172,9 @@ namespace 来电提醒服务端.BGWork
                             long fileID = OABasic.UploadFile(FilePath);
                             if (fileID > 0 || fileID < -10)
                             {
-                                OANoteDada.Add(FileIDTitle, fileID);
+                                JArray atts = new JArray();
+                                atts.Add(fileID);
+                                OANoteDada.Add(FileIDTitle, atts);
                                 if (!string.IsNullOrWhiteSpace(hasFileTitle))
                                 {
                                     OANoteDada.Add(hasFileTitle, 1);
@@ -177,7 +186,10 @@ namespace 来电提醒服务端.BGWork
                             }
                         }
                     }
-
+                    if (!string.IsNullOrWhiteSpace(MemoTitle))
+                    {
+                        OANoteDada.Add(MemoTitle, Memo);
+                    }
                     OANoteHead.Add("data", OANoteDada);
                     //发送表单
                     string OAmsg = OABasic.PostJsonRStr(API, JsonConvert.SerializeObject(OANoteHead));
@@ -185,7 +197,6 @@ namespace 来电提醒服务端.BGWork
                     NoticeX.Show(JsonConvert.SerializeObject(OANoteHead) + "\n" + OAmsg, "录音文件上传",SetConfig.GetConfig("NoticeConf_ErrorShowT", 3) * 1000);
                 }
             }
-
         }
     }
 }
